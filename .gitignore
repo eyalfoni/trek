@@ -1,0 +1,5 @@
+trek-venv
+logs
+__pycache__
+.idea/
+*.pyc

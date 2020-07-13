@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    <table class="table table-hover">
+        <tr>
+            <!--<td width="256px"><img src="{{ user.avatar(256) }}"></td>-->
+            <td>
+                <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+                <!--{% if user.last_seen %}<p>Last seen on: {{ moment(user.last_seen).format('LLL') }}</p>{% endif %}-->
+                {% if user == current_user %}
+                    <p>Your Profile</p>
+                {% endif %}
+                <p>{{ user.email }}</p>
+            </td>
+        </tr>
+    </table>
+{% endblock %}

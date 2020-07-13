@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <div class="container" style="display: flex; flex-flow: row wrap; justify-content: flex-start;">
+        {% for trip in trips %}
+            <a href="{{ url_for('main.trip_view', id=trip.id) }}" style="color: inherit;">
+                <div style="border: 1px solid black; margin: 10px; padding: 10px;">
+                    {{ trip.title }}
+                    ({{ trip.travelers|length }} travelers)
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+    <div class="col-md-4">
+        {{ wtf.quick_form(form) }}
+    </div>
+{% endblock %}

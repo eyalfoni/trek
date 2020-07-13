@@ -1,0 +1,45 @@
+<div style="width: 300px;">
+    {% if 'code' in activity.__dict__ %}
+        <div style="display: flex; flex-direction: column; justify-content: space-between; border: 1px solid black; border-radius: 12px; margin: 20px; padding: 10px;">
+            <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                <div>
+                    {{ activity.code }}
+                </div>
+                <div style="padding-right: 50px"></div>
+                <div>
+                    <img src="{{ url_for('static',filename='plane.png') }}">
+                </div>
+            </div>
+            <div>
+                Book Now
+            </div>
+        </div>
+    {% elif 'Stay' in activity.__class__|string %}
+        <div style="display: flex; flex-direction: column; justify-content: space-between; border: 1px solid black; border-radius: 12px; margin: 20px; padding: 10px;">
+            <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                <div>
+                    {{ activity.name }}
+                </div>
+                <div style="padding-right: 50px"></div>
+                <div>
+                    <img src="{{ url_for('static',filename='hotel.png') }}">
+                </div>
+            </div>
+            <div>
+                Book Now
+            </div>
+        </div>
+    {% else %}
+        <div style="display: flex; flex-direction: column; justify-content: space-between; border: 1px solid black; border-radius: 12px; margin: 20px; padding: 10px;">
+            <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                <div>
+                    {{ activity.name }}
+                </div>
+                <div style="padding-right: 50px"></div>
+                <div>
+                    <img src="{{ url_for('static',filename='calendar.png') }}">
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
