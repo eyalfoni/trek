@@ -27,11 +27,13 @@ def flights_to_cal_events(flights):
     for flight in flights:
         flight_cal_events.append({
             "title": 'Flight ' + flight.code + ' departs',
-            "start": flight.start_datetime.strftime("%Y-%m-%dT%H:%M:%S")
+            "start": flight.start_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
+            "color": "green"
         })
         flight_cal_events.append({
             "title": 'Flight ' + flight.code + ' arrives',
-            "start": flight.end_datetime.strftime("%Y-%m-%dT%H:%M:%S")
+            "start": flight.end_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
+            "color": "green"
         })
     return flight_cal_events
 
