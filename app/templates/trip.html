@@ -6,41 +6,60 @@
         <div style="border: 1px solid black; display: flex; flex-direction: column; height: 300px;">
             <div style="font-weight: 800; font-size: 26px">{{ trip.title }}</div>
             <div>{{ trip.travelers|length}} travelers</div>
-            <div style="padding-top: 40px;">
-                <a href="{{ url_for('main.trip_view', id=trip.id) }}" style="color: inherit;">
-                    <div>Home</div>
+            <div style="padding-top: 40px; display: flex; flex-direction: column;">
+                <a href="{{ url_for('main.trip_view', id=trip.id) }}" style="color: inherit; padding: 10px;">
+                    <button type="button" class="btn btn-outline-primary">Home</button>
                 </a>
-                <div>Itinerary</div>
-                <a href="{{ url_for('main.travelers_view', id=trip.id) }}" style="color: inherit;">
-                    <div>Travelers</div>
+                <a href="#" style="color: inherit; padding: 10px;">
+                    <button type="button" class="btn btn-outline-primary">Itinerary</button>
+                </a>
+                <a href="{{ url_for('main.travelers_view', id=trip.id) }}" style="color: inherit; padding: 10px;">
+                    <button type="button" class="btn btn-outline-primary">Travelers</button>
                 </a>
             </div>
         </div>
-        <div style="border: 1px solid black; display: flex; flex-direction: column; justify-content: center; align-items:center; padding-top: 100px; width: 400px;">
-            <div style="text-align: center">Recent Activity</div>
-            {% for activity in recent_activity %}
-                {% include '_activity.html' %}
-            {% endfor %}
+        <div>
+            <div id="calendar" style="height: 550px; width: 550px;"></div>
         </div>
-        <div style="border: 1px solid black; display: flex; flex-direction: column; justify-content: space-between; padding-top: 100px; width: 400px; height: 400px; padding-bottom: 30px;">
+        <div style="border: 1px solid black; display: flex; flex-direction: column; justify-content: space-around; padding-top: 30px; width: 400px; height: 600px; padding-bottom: 30px;">
             <div style="text-align: center">Book Now</div>
-            <div style="display: flex; flex-direction: row; justify-content: center; padding-top: 40px; cursor: pointer;">
-                <div onclick="show_flight_form()">
+            <div style="display: flex; flex-direction: row; justify-content: center; cursor: pointer;">
+                <button type="button" class="btn btn-primary" onclick="show_flight_form()">
                     Flights
-                </div>
+                </button>
                 <div style="padding-right: 14px"></div>
-                <div onclick="show_hotel_form()">
+                <button type="button" class="btn btn-primary" onclick="show_hotel_form()">
                     Hotels
-                </div>
+                </button>
             </div>
             <div style="display: flex; flex-direction: row; justify-content: center; padding-top: 20px;">
-                <div class="col-md-4" id="flight_form">
+                <div class="col-md-8" id="flight_form">
                     {{ wtf.quick_form(flight_form) }}
                 </div>
-                <div class="col-md-4" id="hotel_form" style="display: none">
+                <div class="col-md-6" id="hotel_form" style="display: none">
                     {{ wtf.quick_form(stay_form) }}
                 </div>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+
+    <script>
+
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          themeSystem: 'standard',
+          headerToolbar: { center: 'dayGridMonth,timeGridWeek,timeGridDay', end: 'today prev,next' },
+          navLinks: true,
+          fixedWeekCount: false,
+          events: {{ events|tojson }}
+        });
+        calendar.render();
+      });
+    </script>
 {% endblock %}

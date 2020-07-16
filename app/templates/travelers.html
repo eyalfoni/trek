@@ -6,13 +6,15 @@
         <div style="border: 1px solid black; display: flex; flex-direction: column; height: 300px;">
             <div style="font-weight: 800; font-size: 26px">{{ trip.title }}</div>
             <div>{{ trip.travelers|length}} travelers</div>
-            <div style="padding-top: 40px;">
-                <a href="{{ url_for('main.trip_view', id=trip.id) }}" style="color: inherit;">
-                    <div>Home</div>
+            <div style="padding-top: 40px; display: flex; flex-direction: column;">
+                <a href="{{ url_for('main.trip_view', id=trip.id) }}" style="color: inherit; padding: 10px;">
+                    <button type="button" class="btn btn-outline-primary">Home</button>
                 </a>
-                <div>Itinerary</div>
-                <a href="{{ url_for('main.travelers_view', id=trip.id) }}" style="color: inherit;">
-                    <div>Travelers</div>
+                <a href="#" style="color: inherit; padding: 10px;">
+                    <button type="button" class="btn btn-outline-primary">Itinerary</button>
+                </a>
+                <a href="{{ url_for('main.travelers_view', id=trip.id) }}" style="color: inherit; padding: 10px;">
+                    <button type="button" class="btn btn-outline-primary">Travelers</button>
                 </a>
             </div>
         </div>
@@ -33,11 +35,11 @@
                 Share your trip link: <input type="text" id="trip_link_id" value="{{ trip_url }}" readonly style="border: none; width: 200px"/>
             </div>
             <div>
-                <button onclick="copy_to_clipboard()">Copy Share Link</button>
+                <button type="button" class="btn btn-primary" onclick="copy_to_clipboard()">Copy Share Link</button>
             </div>
             <div style="padding-top: 30px;">
                 <a href="mailto:abc@example.com?subject=Join my trip!&body=Go to this link to join my trip! {{ trip_url }}" target="_blank" rel="noopener noreferrer" style="color: inherit;">
-                    <button>Email and share your trip</button>
+                    <button type="button" class="btn btn-primary">Email and share your trip</button>
                 </a>
             </div>
         </div>

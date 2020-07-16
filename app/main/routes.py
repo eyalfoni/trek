@@ -5,6 +5,7 @@ from app.models import User, Trip, Flight, Stay, Event
 from flask_login import current_user, login_required
 from datetime import datetime
 from app.main import bp
+from app.utils.date_utils import to_utc_time, stays_to_cal_events, flights_to_cal_events
 
 
 @bp.before_app_request
@@ -49,35 +50,38 @@ def trip_view(id):
         flight = Flight(
             code=flight_form.flight_number.data,
             user_id=current_user.id,
-            trip_id=trip.id
+            trip_id=trip.id,
+            start_datetime=to_utc_time(flight_form.departure_time.data),
+            end_datetime=to_utc_time(flight_form.arrival_time.data)
         )
         db.session.add(flight)
         db.session.commit()
         flash('Your flight has been added!')
+        return redirect(url_for('main.trip_view', id=id))
     if stay_form.validate_on_submit():
         stay = Stay(
             name=stay_form.name.data,
             user_id=current_user.id,
-            trip_id=trip.id
+            trip_id=trip.id,
+            start_date=stay_form.check_in_date.data,
+            end_date=stay_form.check_out_date.data
         )
         db.session.add(stay)
         db.session.commit()
         flash('Your trip has been added!')
-
+        return redirect(url_for('main.trip_view', id=id))
     flights = db.session.query(Flight).filter_by(trip_id=trip.id).all()
     stays = db.session.query(Stay).filter_by(trip_id=trip.id).all()
     events = db.session.query(Event).filter_by(trip_id=trip.id).all()
-    all_trip_activities = []
-    for activity in [flights, stays, events]:
-        if activity:
-            all_trip_activities.extend(activity)
-    list.sort(all_trip_activities, key=lambda a: a.created_at, reverse=True)
+    stays_as_cal_events = stays_to_cal_events(stays)
+    flights_as_cal_events = flights_to_cal_events(flights)
+    cal_events = stays_as_cal_events + flights_as_cal_events
     return render_template(
         'trip.html',
         trip=trip,
         flight_form=flight_form,
         stay_form=stay_form,
-        recent_activity=all_trip_activities
+        events=cal_events
     )
 
 

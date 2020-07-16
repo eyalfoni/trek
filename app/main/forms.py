@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, FileField, IntegerField
-from wtforms.validators import DataRequired, ValidationError, Length, Email
+from wtforms.fields.html5 import DateField, DateTimeLocalField
+from wtforms.validators import DataRequired, ValidationError, Length
 from app.models import User
 
 
@@ -63,10 +64,21 @@ class AddTripForm(FlaskForm):
 
 class AddFlightForm(FlaskForm):
     flight_number = StringField('Flight Number', validators=[DataRequired()])
+    departure_time = DateTimeLocalField('Departure Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
+    arrival_time = DateTimeLocalField('Arrival Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
     submit = SubmitField('Add Flight')
+
+    def validate_departure_time(self, departure_time):
+        if departure_time.data >= self.arrival_time.data:
+            raise ValidationError('Arrival time must be after departure time.')
 
 
 class AddStayForm(FlaskForm):
     name = StringField('Hotel Name', validators=[DataRequired()])
+    check_in_date = DateField('Check In', validators=[DataRequired()])
+    check_out_date = DateField('Check Out', validators=[DataRequired()])
     submit = SubmitField('Add Stay')
 
+    def validate_check_in_date(self, check_in_date):
+        if check_in_date.data >= self.check_out_date.data:
+            raise ValidationError('Check out date must be after check in date.')
