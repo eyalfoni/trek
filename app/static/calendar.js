@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
             id: event_id,
             type: event_type
         }, function(data) {
-            console.log(data)
             var msg = 'Join ' + data.result.user_name + "\'s " + event_type + ' now!';
             div = document.getElementById('book_now');
             if (event_type === 'flight') {
