@@ -1,0 +1,17 @@
+<div style="display: flex; flex-direction: row; justify-content: center; cursor: pointer;">
+    <button type="button" class="btn btn-primary" onclick="show_flight_form()">
+        Flights
+    </button>
+    <div style="padding-right: 14px"></div>
+    <button type="button" class="btn btn-primary" onclick="show_hotel_form()">
+        Hotels
+    </button>
+</div>
+<div style="display: flex; flex-direction: row; justify-content: center; padding-top: 20px;">
+    <div class="col-md-8" id="flight_form">
+        {{ wtf.quick_form(flight_form) }}
+    </div>
+    <div class="col-md-6" id="hotel_form" style="display: none">
+        {{ wtf.quick_form(stay_form) }}
+    </div>
+</div>

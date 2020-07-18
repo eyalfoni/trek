@@ -22,44 +22,16 @@
             <div id="calendar" style="height: 550px; width: 550px;"></div>
         </div>
         <div style="border: 1px solid black; display: flex; flex-direction: column; justify-content: space-around; padding-top: 30px; width: 400px; height: 600px; padding-bottom: 30px;">
-            <div style="text-align: center">Book Now</div>
-            <div style="display: flex; flex-direction: row; justify-content: center; cursor: pointer;">
-                <button type="button" class="btn btn-primary" onclick="show_flight_form()">
-                    Flights
-                </button>
-                <div style="padding-right: 14px"></div>
-                <button type="button" class="btn btn-primary" onclick="show_hotel_form()">
-                    Hotels
-                </button>
-            </div>
-            <div style="display: flex; flex-direction: row; justify-content: center; padding-top: 20px;">
-                <div class="col-md-8" id="flight_form">
-                    {{ wtf.quick_form(flight_form) }}
-                </div>
-                <div class="col-md-6" id="hotel_form" style="display: none">
-                    {{ wtf.quick_form(stay_form) }}
-                </div>
-            </div>
+            <div style="text-align: center">Click an event on the calendar to book now</div>
+            <div id=book_now align="center"></div>
         </div>
     </div>
 {% endblock %}
 
 {% block scripts %}
     {{ super() }}
-
-    <script>
-
-      document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-          initialView: 'dayGridMonth',
-          themeSystem: 'standard',
-          headerToolbar: { center: 'dayGridMonth,timeGridWeek,timeGridDay', end: 'today prev,next' },
-          navLinks: true,
-          fixedWeekCount: false,
-          events: {{ events|tojson }}
-        });
-        calendar.render();
-      });
+     <script type="text/javascript">
+        var events = {{ events|tojson }}
     </script>
+    <script src="{{url_for('static', filename='calendar.js')}}"></script>
 {% endblock %}

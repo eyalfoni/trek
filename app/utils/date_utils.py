@@ -17,7 +17,9 @@ def stays_to_cal_events(stays):
             stay_cal_events.append({
                 "title": 'Stay at ' + stay.name,
                 "start": single_date.strftime("%Y-%m-%d"),
-                "allDay": True
+                "allDay": True,
+                "type": "stay",
+                "event_id": str(stay.id)
             })
     return stay_cal_events
 
@@ -28,12 +30,16 @@ def flights_to_cal_events(flights):
         flight_cal_events.append({
             "title": 'Flight ' + flight.code + ' departs',
             "start": flight.start_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
-            "color": "green"
+            "color": "green",
+            "type": "flight",
+            "event_id": str(flight.id)
         })
         flight_cal_events.append({
             "title": 'Flight ' + flight.code + ' arrives',
             "start": flight.end_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
-            "color": "green"
+            "color": "green",
+            "type": "flight",
+            "event_id": str(flight.id)
         })
     return flight_cal_events
 

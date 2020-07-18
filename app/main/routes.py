@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from app import db
 from app.main.forms import AddTripForm, AddFlightForm, AddStayForm
 from app.models import User, Trip, Flight, Stay, Event
@@ -109,3 +109,29 @@ def invite_landing_view(id):
         db.session.add(trip)
         db.session.commit()
     return redirect(url_for('main.trip_view', id=id))
+
+
+@bp.route('/event')
+@login_required
+def get_event_details():
+    event_id = request.args.get('id', type=int)
+    event_type = request.args.get('type')
+    if event_type == "flight":
+        flight = Flight.query.filter_by(id=event_id).first_or_404()
+        user = User.query.filter_by(id=flight.user_id).first_or_404()
+        res = {
+            'flight_code': flight.code,
+            'departure': str(flight.start_datetime),
+            'arrival': str(flight.end_datetime),
+            'user_name': user.first_name + ' ' + user.last_name
+        }
+    else:
+        stay = Stay.query.filter_by(id=event_id).first_or_404()
+        user = User.query.filter_by(id=stay.user_id).first_or_404()
+        res = {
+            'stay_name': stay.name,
+            'check_in': str(stay.start_date),
+            'check_out': str(stay.end_date),
+            'user_name': user.first_name + ' ' + user.last_name
+        }
+    return jsonify(result=res)
