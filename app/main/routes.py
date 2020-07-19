@@ -135,3 +135,8 @@ def get_event_details():
             'user_name': user.first_name + ' ' + user.last_name
         }
     return jsonify(result=res)
+
+
+@bp.route('/temp')
+def whatever():
+    return render_template('temp.html')
