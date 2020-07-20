@@ -70,18 +70,11 @@ def trip_view(id):
         db.session.commit()
         flash('Your trip has been added!')
         return redirect(url_for('main.trip_view', id=id))
-    flights = db.session.query(Flight).filter_by(trip_id=trip.id).all()
-    stays = db.session.query(Stay).filter_by(trip_id=trip.id).all()
-    events = db.session.query(Event).filter_by(trip_id=trip.id).all()
-    stays_as_cal_events = stays_to_cal_events(stays)
-    flights_as_cal_events = flights_to_cal_events(flights)
-    cal_events = stays_as_cal_events + flights_as_cal_events
     return render_template(
         'trip.html',
         trip=trip,
         flight_form=flight_form,
         stay_form=stay_form,
-        events=cal_events
     )
 
 
@@ -135,3 +128,31 @@ def get_event_details():
             'user_name': user.first_name + ' ' + user.last_name
         }
     return jsonify(result=res)
+
+
+@bp.route('/events')
+@login_required
+def get_events_for_cal():
+    # TODO - clean this up
+    trip_id = request.args.get('trip_id', type=int)
+    event_type = request.args.get('event_type')
+    trip = Trip.query.filter_by(id=trip_id).first_or_404()
+    flights = db.session.query(Flight).filter_by(trip_id=trip.id).all()
+    stays = db.session.query(Stay).filter_by(trip_id=trip.id).all()
+    # events = db.session.query(Event).filter_by(trip_id=trip.id).all()
+    stays_as_cal_events = stays_to_cal_events(stays)
+    flights_as_cal_events = flights_to_cal_events(flights)
+    if event_type == 'all':
+        cal_events = stays_as_cal_events + flights_as_cal_events
+    elif event_type == 'flights':
+        cal_events = flights_as_cal_events
+    else:
+        cal_events = stays_as_cal_events
+    return jsonify(result=cal_events)
+
+
+@bp.route('/discussion/<id>')
+@login_required
+def discussion_view(id):
+    trip = Trip.query.filter_by(id=id).first_or_404()
+    return render_template('discussion.html', trip=trip)

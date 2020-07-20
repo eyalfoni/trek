@@ -1,4 +1,26 @@
-document.addEventListener('DOMContentLoaded', function() {
+function fetchEvents(eventType) {
+    var event_type = 'all'
+    if (eventType !== undefined) {
+        event_type = eventType
+    }
+    var result;
+    $.ajax({
+        url: '/events',
+        dataType: 'json',
+        async: false,
+        data: {
+            trip_id: tripId,
+            event_type: event_type
+        },
+        success: function(data) {
+            result = data.result
+        }
+    })
+    return result
+}
+
+function renderCalendar(eventType) {
+    var events = fetchEvents(eventType);
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
@@ -48,4 +70,12 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
     calendar.render();
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+     renderCalendar();
 });
+
+function filterEvents(e) {
+    renderCalendar(e.value);
+}

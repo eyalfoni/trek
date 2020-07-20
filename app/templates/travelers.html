@@ -8,13 +8,13 @@
             <div>{{ trip.travelers|length}} travelers</div>
             <div style="padding-top: 40px; display: flex; flex-direction: column;">
                 <a href="{{ url_for('main.trip_view', id=trip.id) }}" style="color: inherit; padding: 10px;">
-                    <button type="button" class="btn btn-outline-primary">Home</button>
+                    <button type="button" class="btn btn-outline-primary" style="width: 90px;">Itinerary</button>
                 </a>
-                <a href="#" style="color: inherit; padding: 10px;">
-                    <button type="button" class="btn btn-outline-primary">Itinerary</button>
+                <a href="{{ url_for('main.discussion_view', id=trip.id) }}" style="color: inherit; padding: 10px;">
+                    <button type="button" class="btn btn-outline-primary" style="width: 90px;">Discussion</button>
                 </a>
                 <a href="{{ url_for('main.travelers_view', id=trip.id) }}" style="color: inherit; padding: 10px;">
-                    <button type="button" class="btn btn-outline-primary">Travelers</button>
+                    <button type="button" class="btn btn-outline-primary" style="width: 90px;">Travelers</button>
                 </a>
             </div>
         </div>
