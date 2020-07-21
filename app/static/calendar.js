@@ -36,6 +36,8 @@ function renderCalendar(eventType) {
             id: event_id,
             type: event_type
         }, function(data) {
+            document.getElementById("event_forms").style.display = "none"; // hide the add event forms
+            document.getElementById("book_now").style.display = "block";
             var msg = 'Join ' + data.result.user_name + "\'s " + event_type + ' now!';
             div = document.getElementById('book_now');
             if (event_type === 'flight') {

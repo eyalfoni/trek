@@ -66,7 +66,7 @@ class AddFlightForm(FlaskForm):
     flight_number = StringField('Flight Number', validators=[DataRequired()])
     departure_time = DateTimeLocalField('Departure Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
     arrival_time = DateTimeLocalField('Arrival Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
-    submit = SubmitField('Add Flight')
+    submit_flight = SubmitField('Add Flight')
 
     def validate_departure_time(self, departure_time):
         if departure_time.data >= self.arrival_time.data:
@@ -77,7 +77,7 @@ class AddStayForm(FlaskForm):
     name = StringField('Hotel Name', validators=[DataRequired()])
     check_in_date = DateField('Check In', validators=[DataRequired()])
     check_out_date = DateField('Check Out', validators=[DataRequired()])
-    submit = SubmitField('Add Stay')
+    submit_stay = SubmitField('Add Stay')
 
     def validate_check_in_date(self, check_in_date):
         if check_in_date.data >= self.check_out_date.data:

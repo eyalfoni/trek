@@ -68,7 +68,7 @@ def trip_view(id):
         )
         db.session.add(stay)
         db.session.commit()
-        flash('Your trip has been added!')
+        flash('Your stay has been added!')
         return redirect(url_for('main.trip_view', id=id))
     return render_template(
         'trip.html',

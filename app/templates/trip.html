@@ -27,9 +27,28 @@
                 </select>
             </div>
             <div id="calendar" style="height: 550px; width: 550px;"></div>
+            <div style="display: flex; flex-direction: row; justify-content: flex-end; cursor: pointer; padding-top:40px;">
+                <button id="add_flight_button" type="button" class="btn btn-primary" onclick="show_flight_form()">
+                    Add Flights
+                </button>
+                <div style="padding-right: 14px"></div>
+                <button id="add_stay_button" type="button" class="btn btn-primary" onclick="show_hotel_form()">
+                    Add Hotels
+                </button>
+            </div>
         </div>
         <div style="border: 1px solid black; display: flex; flex-direction: column; justify-content: space-around; padding-top: 30px; width: 400px; height: 600px; padding-bottom: 30px;">
             <div style="text-align: center">Click an event on the calendar to book now</div>
+            <div id="event_forms" style="display: none">
+                <div style="display: flex; flex-direction: row; justify-content: center; padding-top: 20px;">
+                    <div class="col-md-8" id="flight_form">
+                        {{ wtf.quick_form(flight_form) }}
+                    </div>
+                    <div class="col-md-6" id="hotel_form">
+                        {{ wtf.quick_form(stay_form) }}
+                    </div>
+                </div>
+            </div>
             <div id=book_now align="center"></div>
         </div>
     </div>
