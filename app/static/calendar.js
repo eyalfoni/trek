@@ -1,7 +1,8 @@
 function fetchEvents(eventType) {
-    var event_type = 'all'
-    if (eventType !== undefined) {
-        event_type = eventType
+    var selected_events = $('#events_select').val();
+    var selected_travelers = $('#travelers_select').val();
+    if (selected_travelers) {
+        selected_travelers = selected_travelers.join()
     }
     var result;
     $.ajax({
@@ -10,7 +11,8 @@ function fetchEvents(eventType) {
         async: false,
         data: {
             trip_id: tripId,
-            event_type: event_type
+            event_type: selected_events,
+            travelers: selected_travelers
         },
         success: function(data) {
             result = data.result

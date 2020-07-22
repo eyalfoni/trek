@@ -75,6 +75,7 @@ def trip_view(id):
         trip=trip,
         flight_form=flight_form,
         stay_form=stay_form,
+        travelers=trip.travelers
     )
 
 
@@ -136,9 +137,15 @@ def get_events_for_cal():
     # TODO - clean this up
     trip_id = request.args.get('trip_id', type=int)
     event_type = request.args.get('event_type')
+    travelers = request.args.get('travelers')
     trip = Trip.query.filter_by(id=trip_id).first_or_404()
     flights = db.session.query(Flight).filter_by(trip_id=trip.id).all()
     stays = db.session.query(Stay).filter_by(trip_id=trip.id).all()
+    if travelers:
+        travelers = travelers.split(',')
+        traveler_ids = list(map(int, travelers))
+        flights = [f for f in flights if f.user_id in traveler_ids]
+        stays = [s for s in stays if s.user_id in traveler_ids]
     # events = db.session.query(Event).filter_by(trip_id=trip.id).all()
     stays_as_cal_events = stays_to_cal_events(stays)
     flights_as_cal_events = flights_to_cal_events(flights)
