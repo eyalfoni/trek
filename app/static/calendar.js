@@ -83,3 +83,9 @@ document.addEventListener('DOMContentLoaded', function() {
 function filterEvents(e) {
     renderCalendar(e.value);
 }
+
+function clearDropdown(e) {
+    $("#travelers_select").val('default');
+    $("#travelers_select").selectpicker("refresh");
+    filterEvents(e);
+}
