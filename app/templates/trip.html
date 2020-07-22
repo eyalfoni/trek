@@ -25,7 +25,7 @@
                   <option value="flights">Flights</option>
                   <option value="stays">Stays</option>
                 </select>
-                <select id="travelers_select" class="selectpicker col-sm-3" multiple data-live-search="true" title="Everyone" onchange="filterEvents(this)">
+                <select id="travelers_select" class="selectpicker col-sm-3" multiple data-live-search="true" title="All people" onchange="filterEvents(this)">
                     {% for traveler in travelers %}
                         <option value="{{ traveler.id }}">{{ traveler.first_name + ' ' + traveler.last_name }}</option>
                     {% endfor %}
