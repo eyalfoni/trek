@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+        <div style="border: 1px solid black; display: flex; flex-direction: column; height: 300px;">
+            <div style="font-weight: 800; font-size: 26px">{{ trip.title }}</div>
+            <div>{{ trip.travelers|length}} travelers</div>
+            <div style="padding-top: 40px; display: flex; flex-direction: column;">
+                <a href="{{ url_for('main.trip_view', id=trip.id) }}" style="color: inherit; padding: 10px;">
+                    <button type="button" class="btn btn-outline-primary" style="width: 90px;">Itinerary</button>
+                </a>
+                <a href="{{ url_for('main.supplies_view', id=trip.id) }}" style="color: inherit; padding: 10px;">
+                    <button type="button" class="btn btn-outline-primary" style="width: 90px;">Supplies</button>
+                </a>
+                <a href="{{ url_for('main.travelers_view', id=trip.id) }}" style="color: inherit; padding: 10px;">
+                    <button type="button" class="btn btn-outline-primary" style="width: 90px;">Travelers</button>
+                </a>
+            </div>
+        </div>
+        <div style="padding-left: 40px">
+            Supplies List
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Cost</th>
+                  <th scope="col">Lead Person</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for supply in supplies %}
+                    <tr>
+                      <td>{{ supply.name }}</td>
+                      <td>${{ supply.cost }}</td>
+                      <td>{{ supply.user.first_name+' '+supply.user.last_name }}</td>
+                    </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div>
+        <div>
+            <div class="col-md-12" id="supply_form">
+                {{ wtf.quick_form(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

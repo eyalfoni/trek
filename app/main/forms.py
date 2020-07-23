@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, FileField, IntegerField
+from wtforms import StringField, SubmitField, TextAreaField, FileField, IntegerField, SelectField, DecimalField
 from wtforms.fields.html5 import DateField, DateTimeLocalField
 from wtforms.validators import DataRequired, ValidationError, Length
 from app.models import User
@@ -82,3 +82,10 @@ class AddStayForm(FlaskForm):
     def validate_check_in_date(self, check_in_date):
         if check_in_date.data >= self.check_out_date.data:
             raise ValidationError('Check out date must be after check in date.')
+
+
+class AddSupplyItemForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    cost = DecimalField('Price', validators=[DataRequired()])
+    dri = SelectField('Lead Person', coerce=int)
+    submit = SubmitField('Add Supplies',)

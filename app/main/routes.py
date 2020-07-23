@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, url_for, request, jsonify
 from app import db
-from app.main.forms import AddTripForm, AddFlightForm, AddStayForm
-from app.models import User, Trip, Flight, Stay, Event
+from app.main.forms import AddTripForm, AddFlightForm, AddStayForm, AddSupplyItemForm
+from app.models import User, Trip, Flight, Stay, SupplyItem
 from flask_login import current_user, login_required
 from datetime import datetime
 from app.main import bp
@@ -163,3 +163,24 @@ def get_events_for_cal():
 def discussion_view(id):
     trip = Trip.query.filter_by(id=id).first_or_404()
     return render_template('discussion.html', trip=trip)
+
+
+@bp.route('/supplies_view/<id>', methods=['GET', 'POST'])
+@login_required
+def supplies_view(id):
+    trip = Trip.query.filter_by(id=id).first_or_404()
+    form = AddSupplyItemForm()
+    form.dri.choices = [(t.id, t.first_name+' '+t.last_name) for t in trip.travelers]
+    if form.validate_on_submit():
+        supply_item = SupplyItem(
+            name=form.name.data,
+            user_id=form.dri.data,
+            trip_id=trip.id,
+            cost=form.cost.data
+        )
+        db.session.add(supply_item)
+        db.session.commit()
+        flash('Your supplies has been added!')
+        return redirect(url_for('main.supplies_view', id=id))
+    supplies = SupplyItem.query.filter_by(trip_id=id).all()
+    return render_template('supplies.html', trip=trip, supplies=supplies, form=form)

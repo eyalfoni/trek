@@ -111,6 +111,18 @@ class Event(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
+class SupplyItem(db.Model):
+    __tablename__ = 'supplies'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
+    trip_id = db.Column(db.Integer, db.ForeignKey('trips.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    cost = db.Column(db.Numeric(precision=10, scale=2))
+
+    user = db.relationship('User')
+
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
