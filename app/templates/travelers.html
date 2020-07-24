@@ -4,7 +4,7 @@
 {% block app_content %}
     <div style="display: flex; flex-direction: row; justify-content: space-between;">
         <div style="border: 1px solid #337ab7; border-radius: 4px; display: flex; flex-direction: column; height: 300px;">
-            <div style="font-weight: 800; font-size: 26px">{{ trip.title }}</div>
+            <div style="font-weight: 800; font-size: 22px">{{ trip.title }}</div>
             <div>{{ trip.travelers|length}} travelers</div>
             <div style="padding-top: 40px; display: flex; flex-direction: column;">
                 <a href="{{ url_for('main.trip_view', id=trip.id) }}" style="color: inherit; padding: 10px;">
