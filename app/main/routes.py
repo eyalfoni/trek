@@ -184,3 +184,13 @@ def supplies_view(id):
         return redirect(url_for('main.supplies_view', id=id))
     supplies = SupplyItem.query.filter_by(trip_id=id).all()
     return render_template('supplies.html', trip=trip, supplies=supplies, form=form)
+
+
+@bp.route('/complete_supplies/<trip_id>/<supply_id>')
+@login_required
+def complete_supplies(trip_id, supply_id):
+    supplies = SupplyItem.query.filter_by(id=supply_id).first_or_404()
+    supplies.is_done = True
+    db.session.commit()
+    flash('Supplies added!')
+    return redirect(url_for('main.supplies_view', id=trip_id))

@@ -3,7 +3,7 @@
 
 {% block app_content %}
     <div style="display: flex; flex-direction: row; justify-content: space-between;">
-        <div style="border: 1px solid black; display: flex; flex-direction: column; height: 300px;">
+        <div style="border: 1px solid #337ab7; display: flex; flex-direction: column; height: 300px;">
             <div style="font-weight: 800; font-size: 26px">{{ trip.title }}</div>
             <div>{{ trip.travelers|length}} travelers</div>
             <div style="padding-top: 40px; display: flex; flex-direction: column;">
@@ -18,30 +18,41 @@
                 </a>
             </div>
         </div>
-        <div style="padding-left: 40px">
-            Supplies List
-            <table class="table table-striped">
+        <div style="padding-left: 40px; padding-top: 60px;">
+            <table class="table table-striped" style="width: 500px;">
               <thead>
                 <tr>
-                  <th scope="col">Name</th>
+                  <th scope="col">Supplies</th>
                   <th scope="col">Cost</th>
                   <th scope="col">Lead Person</th>
+                  <th scope="col">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {% for supply in supplies %}
                     <tr>
-                      <td>{{ supply.name }}</td>
-                      <td>${{ supply.cost }}</td>
-                      <td>{{ supply.user.first_name+' '+supply.user.last_name }}</td>
+                        <td>{{ supply.name }}</td>
+                        <td>${{ supply.cost }}</td>
+                        <td>{{ supply.user.first_name+' '+supply.user.last_name }}</td>
+                        {% if not supply.is_done %}
+                            <td>Incomplete</td>
+                        {% else %}
+                            <td>Complete</td>
+                        {% endif %}
+                        {% if not supply.is_done %}
+                            <td><a href="{{ url_for('main.complete_supplies', trip_id=trip.id, supply_id=supply.id) }}"><button class="btn btn-primary">Done</button></a></td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
               </tbody>
             </table>
         </div>
-        <div>
-            <div class="col-md-12" id="supply_form">
-                {{ wtf.quick_form(form) }}
+        <div style="border: 1px solid #337ab7; border-radius: 4px; display: flex; flex-direction: column; justify-content: space-around; padding-top: 30px; width: 400px; height: 600px; padding-bottom: 30px;">
+            <div style="text-align: center">Add new supplies</div>
+            <div style="display: flex; flex-direction: row; justify-content: center; padding-top: 20px;">
+                <div class="col-md-8" id="supply_form">
+                    {{ wtf.quick_form(form) }}
+                </div>
             </div>
         </div>
     </div>

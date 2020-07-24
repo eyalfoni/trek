@@ -3,7 +3,7 @@
 
 {% block app_content %}
     <div style="display: flex; flex-direction: row; justify-content: space-between;">
-        <div style="border: 1px solid black; display: flex; flex-direction: column; height: 300px;">
+        <div style="border: 1px solid #337ab7; border-radius: 4px; display: flex; flex-direction: column; height: 300px;">
             <div style="font-weight: 800; font-size: 26px">{{ trip.title }}</div>
             <div>{{ trip.travelers|length}} travelers</div>
             <div style="padding-top: 40px; display: flex; flex-direction: column;">
@@ -43,7 +43,7 @@
                 </button>
             </div>
         </div>
-        <div style="border: 1px solid black; display: flex; flex-direction: column; justify-content: space-around; padding-top: 30px; width: 400px; height: 600px; padding-bottom: 30px;">
+        <div style="border: 1px solid #337ab7; border-radius: 4px; display: flex; flex-direction: column; justify-content: space-around; padding-top: 30px; width: 400px; height: 600px; padding-bottom: 30px;">
             <div style="text-align: center">Click an event on the calendar to book now</div>
             <div id="event_forms" style="display: none">
                 <div style="display: flex; flex-direction: row; justify-content: center; padding-top: 20px;">

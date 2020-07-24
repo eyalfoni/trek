@@ -119,6 +119,7 @@ class SupplyItem(db.Model):
     trip_id = db.Column(db.Integer, db.ForeignKey('trips.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     cost = db.Column(db.Numeric(precision=10, scale=2))
+    is_done = db.Column(db.Boolean, default=False)
 
     user = db.relationship('User')
 
