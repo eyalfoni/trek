@@ -95,7 +95,7 @@ class AddEventForm(FlaskForm):
     name = StringField('Event Name', validators=[DataRequired()])
     start_time = DateTimeLocalField('Start Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
     end_time = DateTimeLocalField('End Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
-    submit_event = SubmitField('Add Activities')
+    submit_event = SubmitField('Add Activity')
 
     def validate_departure_time(self, departure_time):
         if departure_time.data >= self.arrival_time.data:

@@ -29,14 +29,14 @@ def flights_to_cal_events(flights):
     for flight in flights:
         flight_cal_events.append({
             "title": 'Flight ' + flight.code + ' departs',
-            "start": flight.start_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
+            "start": flight.start_datetime.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "color": "green",
             "type": "flight",
             "event_id": str(flight.id)
         })
         flight_cal_events.append({
             "title": 'Flight ' + flight.code + ' arrives',
-            "start": flight.end_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
+            "start": flight.end_datetime.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "color": "green",
             "type": "flight",
             "event_id": str(flight.id)
@@ -49,8 +49,8 @@ def events_to_cal_events(events):
     for event in events:
         event_cal_events.append({
             "title": event.name,
-            "start": event.start_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
-            "end": event.end_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
+            "start": event.start_datetime.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "end": event.end_datetime.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "color": "purple",
             "type": "activity",
             "event_id": str(event.id)
