@@ -107,8 +107,23 @@ class Event(db.Model):
     name = db.Column(db.String(64))
     trip_id = db.Column(db.Integer, db.ForeignKey('trips.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    start_datetime = db.Column(db.DateTime)
+    end_datetime = db.Column(db.DateTime)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+class SupplyItem(db.Model):
+    __tablename__ = 'supplies'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64))
+    trip_id = db.Column(db.Integer, db.ForeignKey('trips.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    cost = db.Column(db.Numeric(precision=10, scale=2))
+    is_done = db.Column(db.Boolean, default=False)
+
+    user = db.relationship('User')
 
 
 @login.user_loader

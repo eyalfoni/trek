@@ -1,11 +1,13 @@
 from flask import render_template, flash, redirect, url_for, request, jsonify
 from app import db
-from app.main.forms import AddTripForm, AddFlightForm, AddStayForm
-from app.models import User, Trip, Flight, Stay, Event
-from flask_login import current_user, login_required
+from app.auth.forms import RegistrationForm
+from app.main.forms import AddTripForm, AddFlightForm, AddStayForm, AddSupplyItemForm, AddEventForm
+from app.models import User, Trip, Flight, Stay, SupplyItem, Event
+from flask_login import current_user, login_required, login_user
 from datetime import datetime
 from app.main import bp
-from app.utils.date_utils import to_utc_time, stays_to_cal_events, flights_to_cal_events
+from app.utils.date_utils import to_utc_time, stays_to_cal_events, flights_to_cal_events, events_to_cal_events
+from wtforms.fields import Label
 
 
 @bp.before_app_request
@@ -42,6 +44,7 @@ def user(id):
 def trip_view(id):
     flight_form = AddFlightForm()
     stay_form = AddStayForm()
+    event_form = AddEventForm()
     trip = Trip.query.filter_by(id=id).first_or_404()
     if current_user not in trip.travelers:
         return render_template('errors/404.html')
@@ -68,20 +71,27 @@ def trip_view(id):
         )
         db.session.add(stay)
         db.session.commit()
-        flash('Your trip has been added!')
+        flash('Your stay has been added!')
         return redirect(url_for('main.trip_view', id=id))
-    flights = db.session.query(Flight).filter_by(trip_id=trip.id).all()
-    stays = db.session.query(Stay).filter_by(trip_id=trip.id).all()
-    events = db.session.query(Event).filter_by(trip_id=trip.id).all()
-    stays_as_cal_events = stays_to_cal_events(stays)
-    flights_as_cal_events = flights_to_cal_events(flights)
-    cal_events = stays_as_cal_events + flights_as_cal_events
+    if event_form.validate_on_submit():
+        event = Event(
+            name=event_form.name.data,
+            user_id=current_user.id,
+            trip_id=trip.id,
+            start_datetime=to_utc_time(event_form.start_time.data),
+            end_datetime=to_utc_time(event_form.end_time.data)
+        )
+        db.session.add(event)
+        db.session.commit()
+        flash('Your event has been added!')
+        return redirect(url_for('main.trip_view', id=id))
     return render_template(
         'trip.html',
         trip=trip,
         flight_form=flight_form,
         stay_form=stay_form,
-        events=cal_events
+        event_form=event_form,
+        travelers=trip.travelers
     )
 
 
@@ -100,15 +110,27 @@ def travelers_view(id):
     )
 
 
-@bp.route('/invite/<id>')
-@login_required
+@bp.route('/invite/<id>', methods=['GET', 'POST'])
 def invite_landing_view(id):
     trip = Trip.query.filter_by(id=id).first_or_404()
-    if current_user not in trip.travelers:
-        trip.travelers.append(current_user)
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    form = RegistrationForm()
+    form.submit.label = Label(field_id="submit_label", text="Join the trip!")
+    if form.validate_on_submit():
+        user = User(
+            email=form.email.data,
+            first_name=form.first_name.data.title(),
+            last_name=form.last_name.data.title()
+        )
+        user.set_password(form.password.data)
+        db.session.add(user)
+        trip.travelers.append(user)
         db.session.add(trip)
         db.session.commit()
-    return redirect(url_for('main.trip_view', id=id))
+        login_user(user)
+        return redirect(url_for('main.trip_view', id=id))
+    return render_template('invite.html', trip=trip, form=form)
 
 
 @bp.route('/event')
@@ -125,7 +147,7 @@ def get_event_details():
             'arrival': str(flight.end_datetime),
             'user_name': user.first_name + ' ' + user.last_name
         }
-    else:
+    elif event_type == "stay":
         stay = Stay.query.filter_by(id=event_id).first_or_404()
         user = User.query.filter_by(id=stay.user_id).first_or_404()
         res = {
@@ -134,7 +156,85 @@ def get_event_details():
             'check_out': str(stay.end_date),
             'user_name': user.first_name + ' ' + user.last_name
         }
+    else:
+        event = Event.query.filter_by(id=event_id).first_or_404()
+        user = User.query.filter_by(id=event.user_id).first_or_404()
+        res = {
+            'event_name': event.name,
+            'start_time': str(event.start_datetime),
+            'end_time': str(event.end_datetime),
+            'user_name': user.first_name + ' ' + user.last_name
+        }
     return jsonify(result=res)
+
+
+@bp.route('/events')
+@login_required
+def get_events_for_cal():
+    # TODO - clean this up
+    trip_id = request.args.get('trip_id', type=int)
+    event_type = request.args.get('event_type')
+    travelers = request.args.get('travelers')
+    trip = Trip.query.filter_by(id=trip_id).first_or_404()
+    flights = db.session.query(Flight).filter_by(trip_id=trip.id).all()
+    stays = db.session.query(Stay).filter_by(trip_id=trip.id).all()
+    events = db.session.query(Event).filter_by(trip_id=trip.id).all()
+    if travelers:
+        travelers = travelers.split(',')
+        traveler_ids = list(map(int, travelers))
+        flights = [f for f in flights if f.user_id in traveler_ids]
+        stays = [s for s in stays if s.user_id in traveler_ids]
+        events = [e for e in events if e.user_id in traveler_ids]
+    stays_as_cal_events = stays_to_cal_events(stays)
+    flights_as_cal_events = flights_to_cal_events(flights)
+    events_as_cal_events = events_to_cal_events(events)
+    if event_type == 'all':
+        cal_events = stays_as_cal_events + flights_as_cal_events + events_as_cal_events
+    elif event_type == 'flights':
+        cal_events = flights_as_cal_events
+    elif event_type == 'stays':
+        cal_events = stays_as_cal_events
+    else:
+        cal_events = events_as_cal_events
+    return jsonify(result=cal_events)
+
+
+@bp.route('/discussion/<id>')
+@login_required
+def discussion_view(id):
+    trip = Trip.query.filter_by(id=id).first_or_404()
+    return render_template('discussion.html', trip=trip)
+
+
+@bp.route('/supplies_view/<id>', methods=['GET', 'POST'])
+@login_required
+def supplies_view(id):
+    trip = Trip.query.filter_by(id=id).first_or_404()
+    form = AddSupplyItemForm()
+    form.dri.choices = [(t.id, t.first_name+' '+t.last_name) for t in trip.travelers]
+    if form.validate_on_submit():
+        supply_item = SupplyItem(
+            name=form.name.data,
+            user_id=form.dri.data,
+            trip_id=trip.id,
+            cost=form.cost.data
+        )
+        db.session.add(supply_item)
+        db.session.commit()
+        flash('Your supplies has been added!')
+        return redirect(url_for('main.supplies_view', id=id))
+    supplies = SupplyItem.query.filter_by(trip_id=id).all()
+    return render_template('supplies.html', trip=trip, supplies=supplies, form=form)
+
+
+@bp.route('/complete_supplies/<trip_id>/<supply_id>')
+@login_required
+def complete_supplies(trip_id, supply_id):
+    supplies = SupplyItem.query.filter_by(id=supply_id).first_or_404()
+    supplies.is_done = True
+    db.session.commit()
+    flash('Supplies added!')
+    return redirect(url_for('main.supplies_view', id=trip_id))
 
 
 @bp.route('/temp')

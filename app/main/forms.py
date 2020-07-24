@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField, FileField, IntegerField
+from wtforms import StringField, SubmitField, TextAreaField, FileField, IntegerField, SelectField, DecimalField
 from wtforms.fields.html5 import DateField, DateTimeLocalField
 from wtforms.validators import DataRequired, ValidationError, Length
 from app.models import User
@@ -66,7 +66,7 @@ class AddFlightForm(FlaskForm):
     flight_number = StringField('Flight Number', validators=[DataRequired()])
     departure_time = DateTimeLocalField('Departure Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
     arrival_time = DateTimeLocalField('Arrival Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
-    submit = SubmitField('Add Flight')
+    submit_flight = SubmitField('Add Flight')
 
     def validate_departure_time(self, departure_time):
         if departure_time.data >= self.arrival_time.data:
@@ -77,8 +77,26 @@ class AddStayForm(FlaskForm):
     name = StringField('Hotel Name', validators=[DataRequired()])
     check_in_date = DateField('Check In', validators=[DataRequired()])
     check_out_date = DateField('Check Out', validators=[DataRequired()])
-    submit = SubmitField('Add Stay')
+    submit_stay = SubmitField('Add Stay')
 
     def validate_check_in_date(self, check_in_date):
         if check_in_date.data >= self.check_out_date.data:
             raise ValidationError('Check out date must be after check in date.')
+
+
+class AddSupplyItemForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    cost = DecimalField('Price', validators=[DataRequired()])
+    dri = SelectField('Lead Person', coerce=int)
+    submit = SubmitField('Add Supplies',)
+
+
+class AddEventForm(FlaskForm):
+    name = StringField('Event Name', validators=[DataRequired()])
+    start_time = DateTimeLocalField('Start Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
+    end_time = DateTimeLocalField('End Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
+    submit_event = SubmitField('Add Activity')
+
+    def validate_departure_time(self, departure_time):
+        if departure_time.data >= self.arrival_time.data:
+            raise ValidationError('End time must be after start time.')

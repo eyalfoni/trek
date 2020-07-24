@@ -2,23 +2,23 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <div style="display: flex; flex-direction: row; justify-content: flex-start;">
-        <div style="border: 1px solid black; display: flex; flex-direction: column; height: 300px;">
-            <div style="font-weight: 800; font-size: 26px">{{ trip.title }}</div>
+    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+        <div style="border: 1px solid #337ab7; border-radius: 4px; display: flex; flex-direction: column; height: 300px;">
+            <div style="font-weight: 800; font-size: 22px">{{ trip.title }}</div>
             <div>{{ trip.travelers|length}} travelers</div>
             <div style="padding-top: 40px; display: flex; flex-direction: column;">
                 <a href="{{ url_for('main.trip_view', id=trip.id) }}" style="color: inherit; padding: 10px;">
-                    <button type="button" class="btn btn-outline-primary">Home</button>
+                    <button type="button" class="btn btn-outline-primary" style="width: 90px;">Itinerary</button>
                 </a>
-                <a href="#" style="color: inherit; padding: 10px;">
-                    <button type="button" class="btn btn-outline-primary">Itinerary</button>
+                <a href="{{ url_for('main.supplies_view', id=trip.id) }}" style="color: inherit; padding: 10px;">
+                    <button type="button" class="btn btn-outline-primary" style="width: 90px;">Supplies</button>
                 </a>
                 <a href="{{ url_for('main.travelers_view', id=trip.id) }}" style="color: inherit; padding: 10px;">
-                    <button type="button" class="btn btn-outline-primary">Travelers</button>
+                    <button type="button" class="btn btn-outline-primary" style="width: 90px;">Travelers</button>
                 </a>
             </div>
         </div>
-        <div style="border: 1px solid black; padding-top: 100px; padding-left: 60px; padding-right: 60px;">
+        <div style="width: 550px; padding-top: 50px;">
             {% for traveler in travelers %}
                 <div style="padding-bottom: 20px;">
                     <div>
@@ -30,14 +30,15 @@
                 </div>
             {% endfor %}
         </div>
-        <div style="border: 1px solid black; padding-top: 100px; padding-left: 60px; padding-right: 60px;">
-            <div>
-                Share your trip link: <input type="text" id="trip_link_id" value="{{ trip_url }}" readonly style="border: none; width: 200px"/>
+        <div style="border: 1px solid #337ab7; border-radius: 4px; display: flex; flex-direction: column; justify-content: flex-start; padding-top: 30px; width: 400px; height: 600px; padding-bottom: 30px;">
+            <div style="text-align: center; padding-top: 100px;">Share your trip link</div>
+            <div style="text-align: center; padding-top: 100px;">
+                <input type="text" id="trip_link_id" value="{{ trip_url }}" readonly style="border: none; width: 200px"/>
             </div>
-            <div>
+            <div style="text-align: center">
                 <button type="button" class="btn btn-primary" onclick="copy_to_clipboard()">Copy Share Link</button>
             </div>
-            <div style="padding-top: 30px;">
+            <div style="padding-top: 30px; text-align: center">
                 <a href="mailto:abc@example.com?subject=Join my trip!&body=Go to this link to join my trip! {{ trip_url }}" target="_blank" rel="noopener noreferrer" style="color: inherit;">
                     <button type="button" class="btn btn-primary">Email and share your trip</button>
                 </a>
