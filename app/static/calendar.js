@@ -55,7 +55,7 @@ function renderCalendar(eventType) {
                 document.getElementById('flight_code').textContent = 'Flight Number ' + data.result.flight_code;
                 document.getElementById('departure').textContent = 'Departing ' + moment(data.result.departure).format('LLL')
                 document.getElementById('arrival').textContent = 'Arriving ' + moment(data.result.arrival).format('LLL')
-            } else {
+            } else if (event_type === 'stay') {
                 div.innerHTML = `
                     <div id=stay_name></div>
                     <div id=check_in></div>
@@ -68,6 +68,19 @@ function renderCalendar(eventType) {
                 document.getElementById('stay_name').textContent = data.result.stay_name;
                 document.getElementById('check_in').textContent = 'Check In ' + moment(data.result.check_in).format('LL')
                 document.getElementById('check_out').textContent = 'Check Out ' + moment(data.result.check_out).format('LL')
+            } else {
+                div.innerHTML = `
+                    <div id=event_name></div>
+                    <div id=start></div>
+                    <div id=end></div>
+                    <button type="button" class="btn btn-primary">
+                        <span id=book_now_msg></span>
+                    </button>
+                `;
+                document.getElementById('book_now_msg').textContent = msg;
+                document.getElementById('event_name').textContent = data.result.event_name;
+                document.getElementById('start').textContent = 'Start ' + moment(data.result.start_time).format('LLL')
+                document.getElementById('end').textContent = 'End ' + moment(data.result.end_time).format('LLL')
             }
             document.getElementById('book_now_msg').textContent = msg;
         })

@@ -44,6 +44,20 @@ def flights_to_cal_events(flights):
     return flight_cal_events
 
 
+def events_to_cal_events(events):
+    event_cal_events = []
+    for event in events:
+        event_cal_events.append({
+            "title": event.name,
+            "start": event.start_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
+            "end": event.end_datetime.strftime("%Y-%m-%dT%H:%M:%S"),
+            "color": "purple",
+            "type": "activity",
+            "event_id": str(event.id)
+        })
+    return event_cal_events
+
+
 # https://stackoverflow.com/questions/1060279/iterating-through-a-range-of-dates-in-python
 # yield start_date through (end_date - 1 day)
 def daterange(start_date, end_date):

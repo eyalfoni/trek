@@ -1,12 +1,12 @@
 from flask import render_template, flash, redirect, url_for, request, jsonify
 from app import db
 from app.auth.forms import RegistrationForm
-from app.main.forms import AddTripForm, AddFlightForm, AddStayForm, AddSupplyItemForm
-from app.models import User, Trip, Flight, Stay, SupplyItem
+from app.main.forms import AddTripForm, AddFlightForm, AddStayForm, AddSupplyItemForm, AddEventForm
+from app.models import User, Trip, Flight, Stay, SupplyItem, Event
 from flask_login import current_user, login_required, login_user
 from datetime import datetime
 from app.main import bp
-from app.utils.date_utils import to_utc_time, stays_to_cal_events, flights_to_cal_events
+from app.utils.date_utils import to_utc_time, stays_to_cal_events, flights_to_cal_events, events_to_cal_events
 from wtforms.fields import Label
 
 
@@ -44,6 +44,7 @@ def user(id):
 def trip_view(id):
     flight_form = AddFlightForm()
     stay_form = AddStayForm()
+    event_form = AddEventForm()
     trip = Trip.query.filter_by(id=id).first_or_404()
     if current_user not in trip.travelers:
         return render_template('errors/404.html')
@@ -72,11 +73,24 @@ def trip_view(id):
         db.session.commit()
         flash('Your stay has been added!')
         return redirect(url_for('main.trip_view', id=id))
+    if event_form.validate_on_submit():
+        event = Event(
+            name=event_form.name.data,
+            user_id=current_user.id,
+            trip_id=trip.id,
+            start_datetime=to_utc_time(event_form.start_time.data),
+            end_datetime=to_utc_time(event_form.end_time.data)
+        )
+        db.session.add(event)
+        db.session.commit()
+        flash('Your event has been added!')
+        return redirect(url_for('main.trip_view', id=id))
     return render_template(
         'trip.html',
         trip=trip,
         flight_form=flight_form,
         stay_form=stay_form,
+        event_form=event_form,
         travelers=trip.travelers
     )
 
@@ -133,13 +147,22 @@ def get_event_details():
             'arrival': str(flight.end_datetime),
             'user_name': user.first_name + ' ' + user.last_name
         }
-    else:
+    elif event_type == "stay":
         stay = Stay.query.filter_by(id=event_id).first_or_404()
         user = User.query.filter_by(id=stay.user_id).first_or_404()
         res = {
             'stay_name': stay.name,
             'check_in': str(stay.start_date),
             'check_out': str(stay.end_date),
+            'user_name': user.first_name + ' ' + user.last_name
+        }
+    else:
+        event = Event.query.filter_by(id=event_id).first_or_404()
+        user = User.query.filter_by(id=event.user_id).first_or_404()
+        res = {
+            'event_name': event.name,
+            'start_time': str(event.start_datetime),
+            'end_time': str(event.end_datetime),
             'user_name': user.first_name + ' ' + user.last_name
         }
     return jsonify(result=res)
@@ -155,20 +178,24 @@ def get_events_for_cal():
     trip = Trip.query.filter_by(id=trip_id).first_or_404()
     flights = db.session.query(Flight).filter_by(trip_id=trip.id).all()
     stays = db.session.query(Stay).filter_by(trip_id=trip.id).all()
+    events = db.session.query(Event).filter_by(trip_id=trip.id).all()
     if travelers:
         travelers = travelers.split(',')
         traveler_ids = list(map(int, travelers))
         flights = [f for f in flights if f.user_id in traveler_ids]
         stays = [s for s in stays if s.user_id in traveler_ids]
-    # events = db.session.query(Event).filter_by(trip_id=trip.id).all()
+        events = [e for e in events if e.user_id in traveler_ids]
     stays_as_cal_events = stays_to_cal_events(stays)
     flights_as_cal_events = flights_to_cal_events(flights)
+    events_as_cal_events = events_to_cal_events(events)
     if event_type == 'all':
-        cal_events = stays_as_cal_events + flights_as_cal_events
+        cal_events = stays_as_cal_events + flights_as_cal_events + events_as_cal_events
     elif event_type == 'flights':
         cal_events = flights_as_cal_events
-    else:
+    elif event_type == 'stays':
         cal_events = stays_as_cal_events
+    else:
+        cal_events = events_as_cal_events
     return jsonify(result=cal_events)
 
 

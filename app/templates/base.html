@@ -68,6 +68,7 @@
             document.getElementById("hotel_form").style.display = "none";
             document.getElementById("event_forms").style.display = "block";
             document.getElementById("book_now").style.display = "none";
+            document.getElementById("event_form").style.display = "none";
         }
 
         function show_hotel_form() {
@@ -75,6 +76,15 @@
             document.getElementById("hotel_form").style.display = "block";
             document.getElementById("event_forms").style.display = "block";
             document.getElementById("book_now").style.display = "none";
+            document.getElementById("event_form").style.display = "none";
+        }
+
+        function show_event_form() {
+            document.getElementById("flight_form").style.display = "none";
+            document.getElementById("hotel_form").style.display = "none";
+            document.getElementById("event_forms").style.display = "block";
+            document.getElementById("book_now").style.display = "none";
+            document.getElementById("event_form").style.display = "block";
         }
 
         function copy_to_clipboard() {

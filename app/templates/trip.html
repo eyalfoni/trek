@@ -24,6 +24,7 @@
                   <option value="all">All events</option>
                   <option value="flights">Flights</option>
                   <option value="stays">Stays</option>
+                  <option value="events">Activities</option>
                 </select>
                 <select id="travelers_select" class="selectpicker col-sm-3" multiple data-live-search="true" title="All people" onchange="filterEvents(this)">
                     {% for traveler in travelers %}
@@ -41,6 +42,10 @@
                 <button id="add_stay_button" type="button" class="btn btn-primary" onclick="show_hotel_form()">
                     Add Hotels
                 </button>
+                <div style="padding-right: 14px"></div>
+                <button id="add_event_button" type="button" class="btn btn-primary" onclick="show_event_form()">
+                    Add Activities
+                </button>
             </div>
         </div>
         <div style="border: 1px solid #337ab7; border-radius: 4px; display: flex; flex-direction: column; justify-content: space-around; padding-top: 30px; width: 400px; height: 600px; padding-bottom: 30px;">
@@ -52,6 +57,9 @@
                     </div>
                     <div class="col-md-6" id="hotel_form">
                         {{ wtf.quick_form(stay_form) }}
+                    </div>
+                    <div class="col-md-8" id="event_form">
+                        {{ wtf.quick_form(event_form) }}
                     </div>
                 </div>
             </div>

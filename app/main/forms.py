@@ -89,3 +89,14 @@ class AddSupplyItemForm(FlaskForm):
     cost = DecimalField('Price', validators=[DataRequired()])
     dri = SelectField('Lead Person', coerce=int)
     submit = SubmitField('Add Supplies',)
+
+
+class AddEventForm(FlaskForm):
+    name = StringField('Event Name', validators=[DataRequired()])
+    start_time = DateTimeLocalField('Start Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
+    end_time = DateTimeLocalField('End Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
+    submit_event = SubmitField('Add Activities')
+
+    def validate_departure_time(self, departure_time):
+        if departure_time.data >= self.arrival_time.data:
+            raise ValidationError('End time must be after start time.')

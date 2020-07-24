@@ -107,6 +107,8 @@ class Event(db.Model):
     name = db.Column(db.String(64))
     trip_id = db.Column(db.Integer, db.ForeignKey('trips.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    start_datetime = db.Column(db.DateTime)
+    end_datetime = db.Column(db.DateTime)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
