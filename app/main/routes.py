@@ -1,11 +1,13 @@
 from flask import render_template, flash, redirect, url_for, request, jsonify
 from app import db
+from app.auth.forms import RegistrationForm
 from app.main.forms import AddTripForm, AddFlightForm, AddStayForm, AddSupplyItemForm
 from app.models import User, Trip, Flight, Stay, SupplyItem
-from flask_login import current_user, login_required
+from flask_login import current_user, login_required, login_user
 from datetime import datetime
 from app.main import bp
 from app.utils.date_utils import to_utc_time, stays_to_cal_events, flights_to_cal_events
+from wtforms.fields import Label
 
 
 @bp.before_app_request
@@ -94,15 +96,27 @@ def travelers_view(id):
     )
 
 
-@bp.route('/invite/<id>')
-@login_required
+@bp.route('/invite/<id>', methods=['GET', 'POST'])
 def invite_landing_view(id):
     trip = Trip.query.filter_by(id=id).first_or_404()
-    if current_user not in trip.travelers:
-        trip.travelers.append(current_user)
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    form = RegistrationForm()
+    form.submit.label = Label(field_id="submit_label", text="Join the trip!")
+    if form.validate_on_submit():
+        user = User(
+            email=form.email.data,
+            first_name=form.first_name.data.title(),
+            last_name=form.last_name.data.title()
+        )
+        user.set_password(form.password.data)
+        db.session.add(user)
+        trip.travelers.append(user)
         db.session.add(trip)
         db.session.commit()
-    return redirect(url_for('main.trip_view', id=id))
+        login_user(user)
+        return redirect(url_for('main.trip_view', id=id))
+    return render_template('invite.html', trip=trip, form=form)
 
 
 @bp.route('/event')
