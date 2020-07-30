@@ -1,0 +1,15 @@
+<div>
+    <div id=stay_name>{{stay.name}}</div>
+    <div id=formatted_address>{{res.formatted_address}}</div>
+    {% if 'international_phone_number' in res %}
+        <div id=international_phone_number>{{res.international_phone_number}}</div>
+    {% endif %}
+    {% if 'website' in res %}
+        <a href="{{res.website}}" target="_blank" rel="noopener noreferrer">Website Link</a>
+    {% endif %}
+    <div id=check_in></div>
+    <div id=check_out></div>
+    <button type="button" class="btn btn-primary">
+        Join {{ res.user_name }}'s hotel now!
+    </button>
+</div>

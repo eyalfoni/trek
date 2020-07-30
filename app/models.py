@@ -6,6 +6,7 @@ from hashlib import md5
 from app import db, login
 from time import time
 from flask import current_app
+from sqlalchemy.dialects.postgresql import JSONB
 
 
 users_to_trips_association_table = db.Table('users_trips',
@@ -96,6 +97,7 @@ class Stay(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     start_date = db.Column(db.Date)
     end_date = db.Column(db.Date)
+    location = db.Column(JSONB)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
