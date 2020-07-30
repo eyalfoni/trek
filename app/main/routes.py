@@ -1,3 +1,4 @@
+import json
 from flask import render_template, flash, redirect, url_for, request, jsonify
 from app import db
 from app.auth.forms import RegistrationForm
@@ -60,18 +61,6 @@ def trip_view(id):
         db.session.add(flight)
         db.session.commit()
         flash('Your flight has been added!')
-        return redirect(url_for('main.trip_view', id=id))
-    if stay_form.validate_on_submit():
-        stay = Stay(
-            name=stay_form.name.data,
-            user_id=current_user.id,
-            trip_id=trip.id,
-            start_date=stay_form.check_in_date.data,
-            end_date=stay_form.check_out_date.data
-        )
-        db.session.add(stay)
-        db.session.commit()
-        flash('Your stay has been added!')
         return redirect(url_for('main.trip_view', id=id))
     if event_form.validate_on_submit():
         event = Event(
@@ -156,6 +145,13 @@ def get_event_details():
             'check_out': str(stay.end_date),
             'user_name': user.first_name + ' ' + user.last_name
         }
+        keys = ['website', 'formatted_address', 'international_phone_number']
+        if stay.location is not None:
+            for key in keys:
+                if key in stay.location:
+                    res.update({key: stay.location[key]})
+        res = render_template('stay.html', res=res, stay=stay)
+        return res
     else:
         event = Event.query.filter_by(id=event_id).first_or_404()
         user = User.query.filter_by(id=event.user_id).first_or_404()
@@ -235,3 +231,20 @@ def complete_supplies(trip_id, supply_id):
     db.session.commit()
     flash('Supplies added!')
     return redirect(url_for('main.supplies_view', id=trip_id))
+
+
+@bp.route('/add/<resource_type>/<trip_id>', methods=['POST'])
+@login_required
+def add_resource(resource_type, trip_id):
+    location_json = json.loads(request.form['place'])
+    stay = Stay(
+        name=location_json['name'],
+        user_id=current_user.id,
+        trip_id=trip_id,
+        start_date=request.form['check_in_date'],
+        end_date=request.form['check_out_date'],
+        location=location_json
+    )
+    db.session.add(stay)
+    db.session.commit()
+    return jsonify({})

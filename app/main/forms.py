@@ -74,10 +74,10 @@ class AddFlightForm(FlaskForm):
 
 
 class AddStayForm(FlaskForm):
-    name = StringField('Hotel Name', validators=[DataRequired()])
-    check_in_date = DateField('Check In', validators=[DataRequired()])
-    check_out_date = DateField('Check Out', validators=[DataRequired()])
-    submit_stay = SubmitField('Add Stay')
+    name = StringField('Hotel Name', id='pac-input', render_kw={"placeholder": "Enter hotel name", "class": "form-control"}, validators=[DataRequired()])
+    check_in_date = DateField('Check In', render_kw={"class": "form-control"}, validators=[DataRequired()])
+    check_out_date = DateField('Check Out', render_kw={"class": "form-control"}, validators=[DataRequired()])
+    submit_stay = SubmitField('Add Stay', render_kw={"class": "btn btn-default"})
 
     def validate_check_in_date(self, check_in_date):
         if check_in_date.data >= self.check_out_date.data:
