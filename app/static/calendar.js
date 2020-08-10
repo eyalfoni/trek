@@ -22,7 +22,7 @@ function fetchEvents() {
 }
 
 function renderCalendar() {
-    var events = fetchEvents();
+    var result = fetchEvents();
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
@@ -30,7 +30,8 @@ function renderCalendar() {
       headerToolbar: { center: 'dayGridMonth,timeGridWeek,timeGridDay', end: 'today prev,next' },
       navLinks: true,
       fixedWeekCount: false,
-      events: events,
+      events: result.events,
+      initialDate: result.start_date,
       eventClick: function(info) {
         var event_id = info.event.extendedProps.event_id
         var event_type = info.event.extendedProps.type

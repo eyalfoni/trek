@@ -7,7 +7,7 @@ from app.models import User, Trip, Flight, Stay, SupplyItem, Event
 from flask_login import current_user, login_required, login_user
 from datetime import datetime
 from app.main import bp
-from app.utils.date_utils import to_utc_time, stays_to_cal_events, flights_to_cal_events, events_to_cal_events
+from app.utils.date_utils import to_utc_time, stays_to_cal_events, flights_to_cal_events, events_to_cal_events, get_cal_start_date
 from wtforms.fields import Label
 
 
@@ -172,9 +172,10 @@ def get_events_for_cal():
     event_type = request.args.get('event_type')
     travelers = request.args.get('travelers')
     trip = Trip.query.filter_by(id=trip_id).first_or_404()
-    flights = db.session.query(Flight).filter_by(trip_id=trip.id).all()
-    stays = db.session.query(Stay).filter_by(trip_id=trip.id).all()
-    events = db.session.query(Event).filter_by(trip_id=trip.id).all()
+    flights = db.session.query(Flight).filter_by(trip_id=trip.id).order_by(Flight.start_datetime.asc()).all()
+    stays = db.session.query(Stay).filter_by(trip_id=trip.id).order_by(Stay.start_date.asc()).all()
+    events = db.session.query(Event).filter_by(trip_id=trip.id).order_by(Event.start_datetime.asc()).all()
+    start_date = get_cal_start_date(flights, stays, events)
     if travelers:
         travelers = travelers.split(',')
         traveler_ids = list(map(int, travelers))
@@ -192,7 +193,7 @@ def get_events_for_cal():
         cal_events = stays_as_cal_events
     else:
         cal_events = events_as_cal_events
-    return jsonify(result=cal_events)
+    return jsonify(result=dict(events=cal_events, start_date=start_date))
 
 
 @bp.route('/discussion/<id>')

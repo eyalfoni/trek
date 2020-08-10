@@ -1,5 +1,5 @@
 import pytz
-from datetime import timedelta
+from datetime import timedelta, date
 
 
 def to_utc_time(date_time):
@@ -63,3 +63,14 @@ def events_to_cal_events(events):
 def daterange(start_date, end_date):
     for n in range(int((end_date - start_date).days)):
         yield start_date + timedelta(n)
+
+
+def get_cal_start_date(flights, stays, events):
+    default_start_date = date.today()
+    if flights and flights[0].start_datetime.date() < default_start_date:
+        default_start_date = flights[0].start_datetime.date()
+    if stays and stays[0].start_date < default_start_date:
+        default_start_date = stays[0].start_date
+    if events and events[0].start_datetime.date() < default_start_date:
+        default_start_date = events[0].start_datetime.date()
+    return default_start_date.isoformat()
