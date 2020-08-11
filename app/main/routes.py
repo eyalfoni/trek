@@ -214,7 +214,9 @@ def supplies_view(id):
             name=form.name.data,
             user_id=form.dri.data,
             trip_id=trip.id,
-            cost=form.cost.data
+            cost=form.cost.data,
+            cost_estimate=form.cost_estimate.data,
+            notes=form.notes.data
         )
         db.session.add(supply_item)
         db.session.commit()
@@ -222,6 +224,32 @@ def supplies_view(id):
         return redirect(url_for('main.supplies_view', id=id))
     supplies = SupplyItem.query.filter_by(trip_id=id).all()
     return render_template('supplies.html', trip=trip, supplies=supplies, form=form)
+
+
+@bp.route('/supplies/<trip_id>/<supply_id>', methods=['GET', 'POST'])
+@login_required
+def supply_view(trip_id, supply_id):
+    trip = Trip.query.filter_by(id=trip_id).first_or_404()
+    form = AddSupplyItemForm()
+    form.dri.choices = [(t.id, t.first_name+' '+t.last_name) for t in trip.travelers]
+    form.submit.label = Label(field_id="submit_label", text="Save")
+    supply_item = SupplyItem.query.filter_by(id=supply_id).first_or_404()
+    if form.validate_on_submit():
+        supply_item.name = form.name.data
+        supply_item.user_id = form.dri.data
+        supply_item.cost = form.cost.data
+        supply_item.cost_estimate = form.cost_estimate.data
+        supply_item.notes = form.notes.data
+        db.session.commit()
+        flash('Your supplies has been saved!')
+        return redirect(url_for('main.supplies_view', id=trip_id))
+    elif request.method == 'GET':
+        form.name.data = supply_item.name
+        form.dri.data = supply_item.user_id
+        form.cost.data = supply_item.cost
+        form.cost_estimate.data = supply_item.cost_estimate
+        form.notes.data = supply_item.notes
+    return render_template('supply.html', form=form, trip=trip, supply=supply_item)
 
 
 @bp.route('/complete_supplies/<trip_id>/<supply_id>')

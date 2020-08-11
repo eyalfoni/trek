@@ -23,16 +23,18 @@
               <thead>
                 <tr>
                   <th scope="col">Supplies</th>
-                  <th scope="col">Cost</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Estimated Price</th>
                   <th scope="col">Lead Person</th>
                   <th scope="col">Status</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody style="cursor: pointer">
                 {% for supply in supplies %}
-                    <tr>
+                    <tr id="{{ supply.id }}" class='clickable-row'>
                         <td>{{ supply.name }}</td>
                         <td>${{ supply.cost }}</td>
+                        <td>${{ supply.cost_estimate if supply.cost_estimate != None else 0 }}</td>
                         <td>{{ supply.user.first_name+' '+supply.user.last_name }}</td>
                         {% if not supply.is_done %}
                             <td>Incomplete</td>
@@ -56,4 +58,12 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+     <script type="text/javascript">
+        var tripId = {{ trip.id }}
+    </script>
+    <script src="{{url_for('static', filename='supplies.js')}}"></script>
 {% endblock %}

@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, FileField, IntegerField, SelectField, DecimalField
 from wtforms.fields.html5 import DateField, DateTimeLocalField
-from wtforms.validators import DataRequired, ValidationError, Length
+from wtforms.validators import DataRequired, ValidationError, Length, Optional
 from app.models import User
 
 
@@ -86,8 +86,10 @@ class AddStayForm(FlaskForm):
 
 class AddSupplyItemForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
-    cost = DecimalField('Price', validators=[DataRequired()])
+    cost = DecimalField('Price', validators=[Optional()], default=0.0)
+    cost_estimate = DecimalField('Estimated Price', validators=[Optional()], default=0.0)
     dri = SelectField('Lead Person', coerce=int)
+    notes = TextAreaField('Notes')
     submit = SubmitField('Add Supplies',)
 
 

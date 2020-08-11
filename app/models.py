@@ -124,6 +124,8 @@ class SupplyItem(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     cost = db.Column(db.Numeric(precision=10, scale=2))
     is_done = db.Column(db.Boolean, default=False)
+    cost_estimate = db.Column(db.Numeric(precision=10, scale=2))
+    notes = db.Column(db.Text())
 
     user = db.relationship('User')
 
