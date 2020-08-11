@@ -150,8 +150,8 @@ def get_event_details():
             for key in keys:
                 if key in stay.location:
                     res.update({key: stay.location[key]})
-        res = render_template('stay.html', res=res, stay=stay)
-        return res
+        result = render_template('stay.html', res=res, stay=stay)
+        return jsonify(result=result, check_in=res['check_in'], check_out=res['check_out'])
     else:
         event = Event.query.filter_by(id=event_id).first_or_404()
         user = User.query.filter_by(id=event.user_id).first_or_404()

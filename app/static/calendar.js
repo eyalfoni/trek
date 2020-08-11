@@ -58,7 +58,9 @@ function renderCalendar() {
                 document.getElementById('arrival').textContent = 'Arriving ' + moment.utc(data.result.arrival).local().format('LLL')
                 document.getElementById('book_now_msg').textContent = msg;
             } else if (event_type === 'stay') {
-                div.innerHTML = data;
+                div.innerHTML = data.result;
+                document.getElementById('check_in').textContent = 'Check in ' + moment.utc(data.check_in).format('LL')
+                document.getElementById('check_out').textContent = 'Check out ' + moment.utc(data.check_out).format('LL')
             } else {
                 var msg = 'Join ' + data.result.user_name + "\'s " + event_type + ' now!';
                 div.innerHTML = `
