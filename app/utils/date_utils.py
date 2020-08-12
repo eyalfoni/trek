@@ -19,7 +19,8 @@ def stays_to_cal_events(stays):
                 "start": single_date.strftime("%Y-%m-%d"),
                 "allDay": True,
                 "type": "stay",
-                "event_id": str(stay.id)
+                "event_id": str(stay.id),
+                "color": "#116d9e"
             })
     return stay_cal_events
 
@@ -30,14 +31,14 @@ def flights_to_cal_events(flights):
         flight_cal_events.append({
             "title": 'Flight ' + flight.code + ' departs',
             "start": flight.start_datetime.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "color": "green",
+            "color": "#1f8c5d",
             "type": "flight",
             "event_id": str(flight.id)
         })
         flight_cal_events.append({
             "title": 'Flight ' + flight.code + ' arrives',
             "start": flight.end_datetime.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "color": "green",
+            "color": "#1f8c5d",
             "type": "flight",
             "event_id": str(flight.id)
         })
@@ -47,14 +48,21 @@ def flights_to_cal_events(flights):
 def events_to_cal_events(events):
     event_cal_events = []
     for event in events:
-        event_cal_events.append({
+        dct = {
             "title": event.name,
             "start": event.start_datetime.strftime("%Y-%m-%dT%H:%M:%SZ"),
             "end": event.end_datetime.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "color": "purple",
+            "color": "#11119e",
             "type": "activity",
             "event_id": str(event.id)
-        })
+        }
+        if event.event_type == 'restaurant':
+            dct.update({"color": "#1da0c4"})
+        elif event.event_type == 'bar':
+            dct.update({"color": "#088523"})
+        elif event.event_type == 'museum':
+            dct.update({"color": "#d19406"})
+        event_cal_events.append(dct)
     return event_cal_events
 
 

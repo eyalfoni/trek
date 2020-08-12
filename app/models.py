@@ -111,6 +111,7 @@ class Event(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     start_datetime = db.Column(db.DateTime)
     end_datetime = db.Column(db.DateTime)
+    event_type = db.Column(db.String(64))
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

@@ -63,12 +63,16 @@ def trip_view(id):
         flash('Your flight has been added!')
         return redirect(url_for('main.trip_view', id=id))
     if event_form.validate_on_submit():
+        event_type = None
+        if event_form.event_type.data != 'other':
+            event_type = event_form.event_type.data
         event = Event(
             name=event_form.name.data,
             user_id=current_user.id,
             trip_id=trip.id,
             start_datetime=to_utc_time(event_form.start_time.data),
-            end_datetime=to_utc_time(event_form.end_time.data)
+            end_datetime=to_utc_time(event_form.end_time.data),
+            event_type=event_type
         )
         db.session.add(event)
         db.session.commit()
@@ -174,7 +178,10 @@ def get_events_for_cal():
     trip = Trip.query.filter_by(id=trip_id).first_or_404()
     flights = db.session.query(Flight).filter_by(trip_id=trip.id).order_by(Flight.start_datetime.asc()).all()
     stays = db.session.query(Stay).filter_by(trip_id=trip.id).order_by(Stay.start_date.asc()).all()
-    events = db.session.query(Event).filter_by(trip_id=trip.id).order_by(Event.start_datetime.asc()).all()
+    events = db.session.query(Event).filter_by(trip_id=trip.id)
+    if event_type in ['restaurant', 'bar', 'museum']:
+        events = events.filter_by(event_type=event_type)
+    events = events.order_by(Event.start_datetime.asc()).all()
     start_date = get_cal_start_date(flights, stays, events)
     if travelers:
         travelers = travelers.split(',')
