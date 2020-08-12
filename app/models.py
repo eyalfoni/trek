@@ -112,6 +112,7 @@ class Event(db.Model):
     start_datetime = db.Column(db.DateTime)
     end_datetime = db.Column(db.DateTime)
     event_type = db.Column(db.String(64))
+    location = db.Column(JSONB)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

@@ -62,20 +62,9 @@ function renderCalendar() {
                 document.getElementById('check_in').textContent = 'Check in ' + moment.utc(data.check_in).format('LL')
                 document.getElementById('check_out').textContent = 'Check out ' + moment.utc(data.check_out).format('LL')
             } else {
-                var msg = 'Join ' + data.result.user_name + "\'s " + event_type + ' now!';
-                div.innerHTML = `
-                    <div id=event_name></div>
-                    <div id=start></div>
-                    <div id=end></div>
-                    <button type="button" class="btn btn-primary">
-                        <span id=book_now_msg></span>
-                    </button>
-                `;
-                document.getElementById('book_now_msg').textContent = msg;
-                document.getElementById('event_name').textContent = data.result.event_name;
-                document.getElementById('start').textContent = 'Start ' + moment.utc(data.result.start_time).local().format('LLL')
-                document.getElementById('end').textContent = 'End ' + moment.utc(data.result.end_time).local().format('LLL')
-                document.getElementById('book_now_msg').textContent = msg;
+                div.innerHTML = data.result;
+                document.getElementById('event_start_time').textContent = 'Start at ' + moment.utc(data.start_time).local().format('LLL')
+                document.getElementById('event_end_time').textContent = 'End at ' + moment.utc(data.end_time).local().format('LLL')
             }
         })
       }

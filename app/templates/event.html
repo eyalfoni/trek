@@ -1,0 +1,15 @@
+<div>
+    <div id=event_name>{{event.name}}</div>
+    <div id=formatted_address>{{res.formatted_address}}</div>
+    {% if 'international_phone_number' in res %}
+        <div id=international_phone_number>{{res.international_phone_number}}</div>
+    {% endif %}
+    {% if 'website' in res %}
+        <a href="{{res.website}}" target="_blank" rel="noopener noreferrer">Website Link</a>
+    {% endif %}
+    <div id=event_start_time></div>
+    <div id=event_end_time></div>
+    <div>
+        Event added by {{ res.user_name }}
+    </div>
+</div>

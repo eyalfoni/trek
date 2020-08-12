@@ -97,11 +97,12 @@ event_type_choices = [('other', 'Other'), ('restaurant', 'Restaurant'), ('bar', 
 
 
 class AddEventForm(FlaskForm):
-    name = StringField('Event Name', validators=[DataRequired()])
-    event_type = SelectField('Type', choices=event_type_choices, validators=[DataRequired()])
-    start_time = DateTimeLocalField('Start Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
-    end_time = DateTimeLocalField('End Time', validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
-    submit_event = SubmitField('Add Activity')
+    name = StringField('Event Name', render_kw={"placeholder": "Enter event name", "class": "form-control"}, validators=[DataRequired()])
+    location = StringField('Location', id='event-input', render_kw={"placeholder": "Enter location", "class": "form-control"}, validators=[Optional()])
+    event_type = SelectField('Type', render_kw={"class": "form-control"}, choices=event_type_choices, validators=[DataRequired()])
+    start_time = DateTimeLocalField('Start Time', render_kw={"class": "form-control"}, validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
+    end_time = DateTimeLocalField('End Time', render_kw={"class": "form-control"}, validators=[DataRequired()], format='%Y-%m-%dT%H:%M')
+    submit_event = SubmitField('Add Activity', render_kw={"class": "btn btn-default"})
 
     def validate_departure_time(self, departure_time):
         if departure_time.data >= self.arrival_time.data:

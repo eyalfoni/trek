@@ -37,3 +37,43 @@ function addStay(e) {
     });
     return false;
 }
+
+var event_input = document.getElementById("event-input");
+var eventSearchBox = new google.maps.places.SearchBox(event_input);
+var event_place;
+
+eventSearchBox.addListener("places_changed", function() {
+    var eventPlaces = eventSearchBox.getPlaces();
+
+    if (eventPlaces.length == 0) {
+      return;
+    } else if (eventPlaces.length !== 1) {
+      alert('Please select a location from the dropdown.')
+      return
+    }
+
+    event_place = eventPlaces[0]
+    if (!event_place.geometry) {
+        console.log("Returned place contains no geometry");
+        return;
+    }
+})
+
+function addEvent(e) {
+    e.preventDefault();
+    var formData = $('#event_form_id').serialize()
+    delete event_place.reviews
+    formData += '&place=' + encodeURIComponent(JSON.stringify(event_place));
+    $.ajax({
+      type: "POST",
+      url: '/add/event/'+tripId.toString(),
+      data: formData,
+      success: function(data) {
+            renderCalendar();
+            document.getElementById("event_form_id").reset();
+      },
+      dataType: 'json',
+      processData: false
+    });
+    return false;
+}

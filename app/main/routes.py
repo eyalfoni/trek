@@ -44,8 +44,6 @@ def user(id):
 @login_required
 def trip_view(id):
     flight_form = AddFlightForm()
-    stay_form = AddStayForm()
-    event_form = AddEventForm()
     trip = Trip.query.filter_by(id=id).first_or_404()
     if current_user not in trip.travelers:
         return render_template('errors/404.html')
@@ -62,28 +60,12 @@ def trip_view(id):
         db.session.commit()
         flash('Your flight has been added!')
         return redirect(url_for('main.trip_view', id=id))
-    if event_form.validate_on_submit():
-        event_type = None
-        if event_form.event_type.data != 'other':
-            event_type = event_form.event_type.data
-        event = Event(
-            name=event_form.name.data,
-            user_id=current_user.id,
-            trip_id=trip.id,
-            start_datetime=to_utc_time(event_form.start_time.data),
-            end_datetime=to_utc_time(event_form.end_time.data),
-            event_type=event_type
-        )
-        db.session.add(event)
-        db.session.commit()
-        flash('Your event has been added!')
-        return redirect(url_for('main.trip_view', id=id))
     return render_template(
         'trip.html',
         trip=trip,
         flight_form=flight_form,
-        stay_form=stay_form,
-        event_form=event_form,
+        stay_form=AddStayForm(),
+        event_form=AddEventForm(),
         travelers=trip.travelers
     )
 
@@ -165,6 +147,13 @@ def get_event_details():
             'end_time': str(event.end_datetime),
             'user_name': user.first_name + ' ' + user.last_name
         }
+        keys = ['website', 'formatted_address', 'international_phone_number']
+        if event.location is not None:
+            for key in keys:
+                if key in event.location:
+                    res.update({key: event.location[key]})
+        result = render_template('event.html', res=res, event=event)
+        return jsonify(result=result, start_time=res['start_time'], end_time=res['end_time'])
     return jsonify(result=res)
 
 
@@ -273,14 +262,30 @@ def complete_supplies(trip_id, supply_id):
 @login_required
 def add_resource(resource_type, trip_id):
     location_json = json.loads(request.form['place'])
-    stay = Stay(
-        name=location_json['name'],
-        user_id=current_user.id,
-        trip_id=trip_id,
-        start_date=request.form['check_in_date'],
-        end_date=request.form['check_out_date'],
-        location=location_json
-    )
-    db.session.add(stay)
-    db.session.commit()
+    if resource_type == 'hotel':
+        stay = Stay(
+            name=location_json['name'],
+            user_id=current_user.id,
+            trip_id=trip_id,
+            start_date=request.form['check_in_date'],
+            end_date=request.form['check_out_date'],
+            location=location_json
+        )
+        db.session.add(stay)
+        db.session.commit()
+    elif resource_type == 'event':
+        event_type = None
+        if request.form['event_type'] != 'other':
+            event_type = request.form['event_type']
+        event = Event(
+            name=request.form['name'],
+            user_id=current_user.id,
+            trip_id=trip_id,
+            start_datetime=to_utc_time(datetime.strptime(request.form['start_time'], '%Y-%m-%dT%H:%M')),
+            end_datetime=to_utc_time(datetime.strptime(request.form['end_time'], '%Y-%m-%dT%H:%M')),
+            event_type=event_type,
+            location=location_json
+        )
+        db.session.add(event)
+        db.session.commit()
     return jsonify({})
