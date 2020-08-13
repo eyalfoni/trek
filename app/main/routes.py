@@ -147,7 +147,7 @@ def get_event_details():
             'end_time': str(event.end_datetime),
             'user_name': user.first_name + ' ' + user.last_name
         }
-        keys = ['website', 'formatted_address', 'international_phone_number']
+        keys = ['website', 'formatted_address', 'international_phone_number', 'name']
         if event.location is not None:
             for key in keys:
                 if key in event.location:
