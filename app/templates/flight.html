@@ -20,11 +20,9 @@
         <!--TODO: if i am the only one on the flight have a special treatment-->
         Travelers on this flight:
         {% for u in flight.users %}
-            {% if u != current_user %}
-                <div>
-                    {{ u.full_name }}
-                </div>
-            {% endif %}
+            <div>
+                {{ u.full_name }}
+            </div>
         {% endfor %}
     </div>
 </div>
