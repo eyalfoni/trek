@@ -17,6 +17,7 @@
             </a>
         {% endif %}
     <div>
+        <!--TODO: if i am the only one on the flight have a special treatment-->
         Travelers on this flight:
         {% for u in flight.users %}
             {% if u != current_user %}

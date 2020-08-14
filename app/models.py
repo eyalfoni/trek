@@ -100,7 +100,6 @@ class Flight(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(64))
     trip_id = db.Column(db.Integer, db.ForeignKey('trips.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     start_datetime = db.Column(db.DateTime)
     end_datetime = db.Column(db.DateTime)
 
