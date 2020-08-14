@@ -51,11 +51,11 @@ def trip_view(id):
     if flight_form.validate_on_submit():
         flight = Flight(
             code=flight_form.flight_number.data,
-            user_id=current_user.id,
             trip_id=trip.id,
             start_datetime=to_utc_time(flight_form.departure_time.data),
             end_datetime=to_utc_time(flight_form.arrival_time.data)
         )
+        flight.users.append(current_user)
         db.session.add(flight)
         db.session.commit()
         flash('Your flight has been added!')
@@ -108,20 +108,16 @@ def invite_landing_view(id):
     return render_template('invite.html', trip=trip, form=form)
 
 
-@bp.route('/event')
+@bp.route('/event/<trip_id>')
 @login_required
-def get_event_details():
+def get_event_details(trip_id):
+    trip = Trip.query.filter_by(id=trip_id).first_or_404()
     event_id = request.args.get('id', type=int)
     event_type = request.args.get('type')
     if event_type == "flight":
         flight = Flight.query.filter_by(id=event_id).first_or_404()
-        user = User.query.filter_by(id=flight.user_id).first_or_404()
-        res = {
-            'flight_code': flight.code,
-            'departure': str(flight.start_datetime),
-            'arrival': str(flight.end_datetime),
-            'user_name': user.first_name + ' ' + user.last_name
-        }
+        result = render_template('flight.html', current_user=current_user, flight=flight, trip=trip)
+        return jsonify(result=result, departure=str(flight.start_datetime), arrival=str(flight.end_datetime))
     elif event_type == "stay":
         stay = Stay.query.filter_by(id=event_id).first_or_404()
         user = User.query.filter_by(id=stay.user_id).first_or_404()
@@ -154,7 +150,6 @@ def get_event_details():
                     res.update({key: event.location[key]})
         result = render_template('event.html', res=res, event=event)
         return jsonify(result=result, start_time=res['start_time'], end_time=res['end_time'])
-    return jsonify(result=res)
 
 
 @bp.route('/events')
@@ -175,7 +170,7 @@ def get_events_for_cal():
     if travelers:
         travelers = travelers.split(',')
         traveler_ids = list(map(int, travelers))
-        flights = [f for f in flights if f.user_id in traveler_ids]
+        flights = [f for f in flights for u in f.users if u.id in traveler_ids]
         stays = [s for s in stays if s.user_id in traveler_ids]
         events = [e for e in events if e.user_id in traveler_ids]
     stays_as_cal_events = stays_to_cal_events(stays)
@@ -288,4 +283,25 @@ def add_resource(resource_type, trip_id):
         )
         db.session.add(event)
         db.session.commit()
+    return jsonify({})
+
+
+@bp.route('/join/<trip_id>/<resource_type>/<resource_id>/<action>', methods=['GET'])
+@login_required
+def join(trip_id, resource_type, resource_id, action):
+    # TODO - make the below into a single decorator
+    trip = Trip.query.filter_by(id=trip_id).first_or_404()
+    if current_user not in trip.travelers:
+        return render_template('errors/404.html')
+    if resource_type == 'flight':
+        flight = db.session.query(Flight).filter_by(id=resource_id).first_or_404()
+        if action == 'add':
+            flight.users.append(current_user)
+            db.session.commit()
+            flash('Your flight has been added!')
+        elif action == 'delete':
+            flight.users.remove(current_user)
+            db.session.commit()
+            flash('Your flight has been removed!')
+        return redirect(url_for('main.trip_view', id=trip_id))
     return jsonify({})

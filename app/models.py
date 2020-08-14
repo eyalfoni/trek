@@ -9,9 +9,16 @@ from flask import current_app
 from sqlalchemy.dialects.postgresql import JSONB
 
 
-users_to_trips_association_table = db.Table('users_trips',
+users_to_trips_association_table = db.Table(
+    'users_trips',
     db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
     db.Column('trip_id', db.Integer, db.ForeignKey('trips.id')),
+)
+
+users_to_flights_association_table = db.Table(
+    'users_flights',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+    db.Column('flight_id', db.Integer, db.ForeignKey('flights.id')),
 )
 
 
@@ -30,7 +37,14 @@ class User(UserMixin, db.Model):
     trips = db.relationship(
         "Trip",
         secondary=users_to_trips_association_table,
-        back_populates="travelers")
+        back_populates="travelers"
+    )
+
+    flights = db.relationship(
+        "Flight",
+        secondary=users_to_flights_association_table,
+        back_populates="users"
+    )
 
     def __repr__(self):
         return '<User {}>'.format(self.email)
@@ -60,6 +74,10 @@ class User(UserMixin, db.Model):
             return
         return User.query.get(id)
 
+    @property
+    def full_name(self):
+        return self.first_name + ' ' + self.last_name
+
 
 class Trip(db.Model):
     __tablename__ = 'trips'
@@ -72,7 +90,8 @@ class Trip(db.Model):
     travelers = db.relationship(
         "User",
         secondary=users_to_trips_association_table,
-        back_populates="trips")
+        back_populates="trips"
+    )
 
 
 class Flight(db.Model):
@@ -84,6 +103,12 @@ class Flight(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     start_datetime = db.Column(db.DateTime)
     end_datetime = db.Column(db.DateTime)
+
+    users = db.relationship(
+        "User",
+        secondary=users_to_flights_association_table,
+        back_populates="flights"
+    )
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

@@ -1,0 +1,29 @@
+<div>
+    <div id=flight_code>{{flight.code}}</div>
+    <div id=departure></div>
+    <div id=arrival></div>
+        {% if current_user not in flight.users %}
+            <a style="color: inherit;" href="{{ url_for('main.join', trip_id=trip.id, resource_type='flight', resource_id=flight.id, action='add') }}">
+                <button type="button" class="btn btn-primary">
+                    Join this flight now!
+                </button>
+            </a>
+        {% else %}
+        <!--TODO: if there are no more users, surface a delete button-->
+            <a style="color: inherit;" href="{{ url_for('main.join', trip_id=trip.id, resource_type='flight', resource_id=flight.id, action='delete') }}">
+                <button style="" type="button" class="btn btn-secondary">
+                    Remove me from this flight
+                </button>
+            </a>
+        {% endif %}
+    <div>
+        Travelers on this flight:
+        {% for u in flight.users %}
+            {% if u != current_user %}
+                <div>
+                    {{ u.full_name }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>

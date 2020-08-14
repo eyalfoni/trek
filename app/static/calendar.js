@@ -35,7 +35,7 @@ function renderCalendar() {
       eventClick: function(info) {
         var event_id = info.event.extendedProps.event_id
         var event_type = info.event.extendedProps.type
-        $.get('/event', {
+        $.get('/event/'+tripId, {
             id: event_id,
             type: event_type
         }, function(data) {
@@ -43,20 +43,9 @@ function renderCalendar() {
             document.getElementById("book_now").style.display = "block";
             div = document.getElementById('book_now');
             if (event_type === 'flight') {
-                var msg = 'Join ' + data.result.user_name + "\'s " + event_type + ' now!';
-                div.innerHTML = `
-                    <div id=flight_code></div>
-                    <div id=departure></div>
-                    <div id=arrival></div>
-                    <button type="button" class="btn btn-primary">
-                        <span id=book_now_msg></span>
-                    </button>
-                `;
-                document.getElementById('book_now_msg').textContent = msg;
-                document.getElementById('flight_code').textContent = 'Flight Number ' + data.result.flight_code;
-                document.getElementById('departure').textContent = 'Departing ' + moment.utc(data.result.departure).local().format('LLL')
-                document.getElementById('arrival').textContent = 'Arriving ' + moment.utc(data.result.arrival).local().format('LLL')
-                document.getElementById('book_now_msg').textContent = msg;
+                div.innerHTML = data.result;
+                document.getElementById('departure').textContent = 'Departing ' + moment.utc(data.departure).local().format('LLL')
+                document.getElementById('arrival').textContent = 'Arriving ' + moment.utc(data.arrival).local().format('LLL')
             } else if (event_type === 'stay') {
                 div.innerHTML = data.result;
                 document.getElementById('check_in').textContent = 'Check in ' + moment.utc(data.check_in).format('LL')
