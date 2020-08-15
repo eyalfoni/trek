@@ -130,7 +130,6 @@ class Stay(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     trip_id = db.Column(db.Integer, db.ForeignKey('trips.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     start_date = db.Column(db.Date)
     end_date = db.Column(db.Date)
     location = db.Column(JSONB)
