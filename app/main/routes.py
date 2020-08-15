@@ -331,7 +331,7 @@ def flight_view(trip_id, flight_id):
         flight.start_datetime = to_utc_time(flight_form.departure_time.data),
         flight.end_datetime = to_utc_time(flight_form.arrival_time.data)
         db.session.commit()
-        flash('Your flight has been update!')
+        flash('Your flight has been updated!')
         return redirect(url_for('main.trip_view', id=trip_id))
     elif request.method == 'GET':
         flight_form.flight_number.data = flight.code

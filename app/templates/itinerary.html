@@ -20,8 +20,10 @@
             </select>
             <button type="button" class="btn btn-secondary" onclick="clearDropdown(this)">All Travelers</button>
         </div>
-        <div id="calendar" style="height: 550px; width: 550px;"></div>
-        <div style="display: flex; flex-direction: row; justify-content: flex-end; cursor: pointer; padding-top:40px;">
+        <div id="calendar" style="height: 550px; width: 800px;"></div>
+    </div>
+    <div style="padding-top: 40px;">
+        <div style="display: flex; flex-direction: row; justify-content: flex-end; cursor: pointer; margin: 5px;">
             <button id="add_flight_button" type="button" class="btn btn-primary" onclick="show_flight_form()">
                 Add Flights
             </button>
@@ -34,87 +36,87 @@
                 Add Activities
             </button>
         </div>
-    </div>
-    <div style="border: 1px solid #337ab7; border-radius: 4px; display: flex; flex-direction: column; justify-content: space-around; padding-top: 30px; width: 400px; height: 600px; padding-bottom: 30px;">
-        <div style="text-align: center">Click an event on the calendar to book now</div>
-        <div id="event_forms" style="display: none">
-            <div style="display: flex; flex-direction: row; justify-content: center; padding-top: 20px;">
-                <div class="col-md-8" id="flight_form">
-                    {{ wtf.quick_form(flight_form) }}
-                </div>
-                <div class="col-md-8" id="hotel_form">
-                    <form onsubmit="return addStay(event)" novalidate class="form" id="hotel_form_id">
-                        {{ stay_form.hidden_tag() }}
+        <div style="border: 1px solid #337ab7; border-radius: 4px; display: flex; flex-direction: column; justify-content: space-around; padding-top: 30px; width: 400px; height: 600px; padding-bottom: 30px;">
+            <div style="text-align: center">Click an event on the calendar to book now</div>
+            <div id="event_forms" style="display: none">
+                <div style="display: flex; flex-direction: row; justify-content: center; padding-top: 20px;">
+                    <div class="col-md-8" id="flight_form">
+                        {{ wtf.quick_form(flight_form) }}
+                    </div>
+                    <div class="col-md-8" id="hotel_form">
+                        <form onsubmit="return addStay(event)" novalidate class="form" id="hotel_form_id">
+                            {{ stay_form.hidden_tag() }}
 
-                        <div class="form-group required">
-                        {{ stay_form.name.label }}
-                        {{ stay_form.name(size=32) }}
-                        {% for error in stay_form.name.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
-                        </div>
-                        <div class="form-group required">
-                        {{ stay_form.check_in_date.label }}
-                        {{ stay_form.check_in_date() }}
-                        {% for error in stay_form.check_in_date.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
-                        </div>
-                        <div class="form-group required">
-                        {{ stay_form.check_out_date.label }}
-                        {{ stay_form.check_out_date() }}
-                        {% for error in stay_form.check_out_date.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
-                        </div>
-                        {{ stay_form.submit_stay() }}
-                    </form>
-                </div>
-                <div class="col-md-8" id="event_form">
-                    <form onsubmit="return addEvent(event)" novalidate class="form" id="event_form_id">
-                        {{ event_form.hidden_tag() }}
+                            <div class="form-group required">
+                            {{ stay_form.name.label }}
+                            {{ stay_form.name(size=32) }}
+                            {% for error in stay_form.name.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                            </div>
+                            <div class="form-group required">
+                            {{ stay_form.check_in_date.label }}
+                            {{ stay_form.check_in_date() }}
+                            {% for error in stay_form.check_in_date.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                            </div>
+                            <div class="form-group required">
+                            {{ stay_form.check_out_date.label }}
+                            {{ stay_form.check_out_date() }}
+                            {% for error in stay_form.check_out_date.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                            </div>
+                            {{ stay_form.submit_stay() }}
+                        </form>
+                    </div>
+                    <div class="col-md-8" id="event_form">
+                        <form onsubmit="return addEvent(event)" novalidate class="form" id="event_form_id">
+                            {{ event_form.hidden_tag() }}
 
-                        <div class="form-group required">
-                        {{ event_form.name.label }}
-                        {{ event_form.name(size=32) }}
-                        {% for error in event_form.name.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
-                        </div>
-                        <div class="form-group required">
-                        {{ event_form.event_type.label }}
-                        {{ event_form.event_type() }}
-                        {% for error in event_form.event_type.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
-                        </div>
-                        <div class="form-group required">
-                        {{ event_form.location.label }}
-                        {{ event_form.location(size=32) }}
-                        {% for error in event_form.location.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
-                        </div>
-                        <div class="form-group required">
-                        {{ event_form.start_time.label }}
-                        {{ event_form.start_time() }}
-                        {% for error in event_form.start_time.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
-                        </div>
-                        <div class="form-group required">
-                        {{ event_form.end_time.label }}
-                        {{ event_form.end_time() }}
-                        {% for error in event_form.end_time.errors %}
-                            <span style="color: red;">[{{ error }}]</span>
-                        {% endfor %}
-                        </div>
-                        {{ event_form.submit_event() }}
-                    </form>
+                            <div class="form-group required">
+                            {{ event_form.name.label }}
+                            {{ event_form.name(size=32) }}
+                            {% for error in event_form.name.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                            </div>
+                            <div class="form-group required">
+                            {{ event_form.event_type.label }}
+                            {{ event_form.event_type() }}
+                            {% for error in event_form.event_type.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                            </div>
+                            <div class="form-group required">
+                            {{ event_form.location.label }}
+                            {{ event_form.location(size=32) }}
+                            {% for error in event_form.location.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                            </div>
+                            <div class="form-group required">
+                            {{ event_form.start_time.label }}
+                            {{ event_form.start_time() }}
+                            {% for error in event_form.start_time.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                            </div>
+                            <div class="form-group required">
+                            {{ event_form.end_time.label }}
+                            {{ event_form.end_time() }}
+                            {% for error in event_form.end_time.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                            </div>
+                            {{ event_form.submit_event() }}
+                        </form>
+                    </div>
                 </div>
             </div>
+            <div id=book_now align="center"></div>
         </div>
-        <div id=book_now align="center"></div>
     </div>
 {% endblock %}
 
