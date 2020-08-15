@@ -9,7 +9,27 @@
     {% endif %}
     <div id=check_in></div>
     <div id=check_out></div>
-    <button type="button" class="btn btn-primary">
-        Join {{ res.user_name }}'s hotel now!
-    </button>
+    {% if current_user not in stay.users %}
+        <a style="color: inherit;" href="{{ url_for('main.join', trip_id=trip.id, resource_type='stay', resource_id=stay.id, action='add') }}">
+            <button type="button" class="btn btn-primary">
+                Join this hotel now!
+            </button>
+        </a>
+    {% else %}
+    <!--TODO: if there are no more users, surface a delete button-->
+    <a style="color: inherit;" href="{{ url_for('main.join', trip_id=trip.id, resource_type='stay', resource_id=stay.id, action='delete') }}">
+        <button style="" type="button" class="btn btn-secondary">
+            Remove me from this hotel
+        </button>
+    </a>
+    {% endif %}
+    <div>
+        <!--TODO: if i am the only one on the flight have a special treatment-->
+        Travelers staying at this hotel:
+        {% for u in stay.users %}
+            <div>
+                {{ u.full_name }}
+            </div>
+        {% endfor %}
+    </div>
 </div>

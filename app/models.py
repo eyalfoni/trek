@@ -21,6 +21,12 @@ users_to_flights_association_table = db.Table(
     db.Column('flight_id', db.Integer, db.ForeignKey('flights.id')),
 )
 
+users_to_stays_association_table = db.Table(
+    'users_stays',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+    db.Column('stay_id', db.Integer, db.ForeignKey('stays.id')),
+)
+
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -43,6 +49,12 @@ class User(UserMixin, db.Model):
     flights = db.relationship(
         "Flight",
         secondary=users_to_flights_association_table,
+        back_populates="users"
+    )
+
+    stays = db.relationship(
+        "Stay",
+        secondary=users_to_stays_association_table,
         back_populates="users"
     )
 
@@ -103,13 +115,13 @@ class Flight(db.Model):
     start_datetime = db.Column(db.DateTime)
     end_datetime = db.Column(db.DateTime)
 
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
     users = db.relationship(
         "User",
         secondary=users_to_flights_association_table,
         back_populates="flights"
     )
-
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class Stay(db.Model):
@@ -124,6 +136,12 @@ class Stay(db.Model):
     location = db.Column(JSONB)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    users = db.relationship(
+        "User",
+        secondary=users_to_stays_association_table,
+        back_populates="stays"
+    )
 
 
 class Event(db.Model):

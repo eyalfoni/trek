@@ -132,7 +132,7 @@ def get_event_details(trip_id):
             for key in keys:
                 if key in stay.location:
                     res.update({key: stay.location[key]})
-        result = render_template('stay.html', res=res, stay=stay)
+        result = render_template('stay.html', res=res, stay=stay, trip=trip)
         return jsonify(result=result, check_in=res['check_in'], check_out=res['check_out'])
     else:
         event = Event.query.filter_by(id=event_id).first_or_404()
@@ -171,7 +171,7 @@ def get_events_for_cal():
         travelers = travelers.split(',')
         traveler_ids = list(map(int, travelers))
         flights = [f for f in flights for u in f.users if u.id in traveler_ids]
-        stays = [s for s in stays if s.user_id in traveler_ids]
+        stays = [s for s in stays for u in s.users if u.id in traveler_ids]
         events = [e for e in events if e.user_id in traveler_ids]
     stays_as_cal_events = stays_to_cal_events(stays)
     flights_as_cal_events = flights_to_cal_events(flights)
@@ -260,12 +260,12 @@ def add_resource(resource_type, trip_id):
     if resource_type == 'hotel':
         stay = Stay(
             name=location_json['name'],
-            user_id=current_user.id,
             trip_id=trip_id,
             start_date=request.form['check_in_date'],
             end_date=request.form['check_out_date'],
             location=location_json
         )
+        stay.users.append(current_user)
         db.session.add(stay)
         db.session.commit()
     elif resource_type == 'event':
@@ -303,5 +303,16 @@ def join(trip_id, resource_type, resource_id, action):
             flight.users.remove(current_user)
             db.session.commit()
             flash('Your flight has been removed!')
+        return redirect(url_for('main.trip_view', id=trip_id))
+    elif resource_type == 'stay':
+        stay = db.session.query(Stay).filter_by(id=resource_id).first_or_404()
+        if action == 'add':
+            stay.users.append(current_user)
+            db.session.commit()
+            flash('Your hotel has been added!')
+        elif action == 'delete':
+            stay.users.remove(current_user)
+            db.session.commit()
+            flash('Your hotel has been removed!')
         return redirect(url_for('main.trip_view', id=trip_id))
     return jsonify({})
