@@ -89,7 +89,10 @@ def travelers_view(id):
 def invite_landing_view(id):
     trip = Trip.query.filter_by(id=id).first_or_404()
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        if current_user not in trip.travelers:
+            trip.travelers.append(current_user)
+            db.session.commit()
+        return redirect(url_for('main.trip_view', id=id))
     form = RegistrationForm()
     form.submit.label = Label(field_id="submit_label", text="Join the trip!")
     if form.validate_on_submit():
