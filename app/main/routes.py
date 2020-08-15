@@ -317,3 +317,24 @@ def join(trip_id, resource_type, resource_id, action):
             flash('Your hotel has been removed!')
         return redirect(url_for('main.trip_view', id=trip_id))
     return jsonify({})
+
+
+@bp.route('/<trip_id>/flight/<flight_id>', methods=["GET", "POST"])
+@login_required
+def flight_view(trip_id, flight_id):
+    trip = Trip.query.filter_by(id=trip_id).first_or_404()
+    flight = db.session.query(Flight).filter_by(id=flight_id).first_or_404()
+    flight_form = AddFlightForm()
+    flight_form.submit_flight.label = Label(field_id="submit_label", text="Save")
+    if flight_form.validate_on_submit():
+        flight.code = flight_form.flight_number.data,
+        flight.start_datetime = to_utc_time(flight_form.departure_time.data),
+        flight.end_datetime = to_utc_time(flight_form.arrival_time.data)
+        db.session.commit()
+        flash('Your flight has been update!')
+        return redirect(url_for('main.trip_view', id=trip_id))
+    elif request.method == 'GET':
+        flight_form.flight_number.data = flight.code
+        flight_form.departure_time.data = flight.start_datetime
+        flight_form.arrival_time.data = flight.end_datetime
+    return render_template('flight_edit.html', flight=flight, trip=trip, flight_form=flight_form)

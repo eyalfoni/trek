@@ -15,6 +15,11 @@
                     Remove me from this flight
                 </button>
             </a>
+            <a style="color: inherit;" href="{{ url_for('main.flight_view', trip_id=trip.id, flight_id=flight.id) }}">
+                <button style="" type="button" class="btn btn-secondary">
+                    Edit flight
+                </button>
+            </a>
         {% endif %}
     <div>
         <!--TODO: if i am the only one on the flight have a special treatment-->

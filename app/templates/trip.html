@@ -2,7 +2,7 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+    <div id=trip_id style="display: flex; flex-direction: row; justify-content: space-between;">
         <div style="border: 1px solid #337ab7; border-radius: 4px; display: flex; flex-direction: column; height: 300px;">
             <div style="font-weight: 800; font-size: 22px">{{ trip.title }}</div>
             <div>{{ trip.travelers|length}} travelers</div>
