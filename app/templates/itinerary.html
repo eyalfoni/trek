@@ -1,0 +1,129 @@
+{% extends "trip.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block trip_content %}
+    <div>
+        <div style="padding-bottom: 10px;">
+            <select id="events_select" class="selectpicker col-sm-3" name="event_types" onchange="filterEvents(this)">
+              <option value="all">All events</option>
+              <option value="flights">Flights</option>
+              <option value="stays">Stays</option>
+              <option value="events">Activities</option>
+              <option value="restaurant">Restaurants</option>
+              <option value="bar">Bars</option>
+              <option value="museum">Museums</option>
+            </select>
+            <select id="travelers_select" class="selectpicker col-sm-3" multiple data-live-search="true" title="All people" onchange="filterEvents(this)">
+                {% for traveler in travelers %}
+                    <option value="{{ traveler.id }}">{{ traveler.first_name + ' ' + traveler.last_name }}</option>
+                {% endfor %}
+            </select>
+            <button type="button" class="btn btn-secondary" onclick="clearDropdown(this)">All Travelers</button>
+        </div>
+        <div id="calendar" style="height: 550px; width: 550px;"></div>
+        <div style="display: flex; flex-direction: row; justify-content: flex-end; cursor: pointer; padding-top:40px;">
+            <button id="add_flight_button" type="button" class="btn btn-primary" onclick="show_flight_form()">
+                Add Flights
+            </button>
+            <div style="padding-right: 14px"></div>
+            <button id="add_stay_button" type="button" class="btn btn-primary" onclick="show_hotel_form()">
+                Add Hotels
+            </button>
+            <div style="padding-right: 14px"></div>
+            <button id="add_event_button" type="button" class="btn btn-primary" onclick="show_event_form()">
+                Add Activities
+            </button>
+        </div>
+    </div>
+    <div style="border: 1px solid #337ab7; border-radius: 4px; display: flex; flex-direction: column; justify-content: space-around; padding-top: 30px; width: 400px; height: 600px; padding-bottom: 30px;">
+        <div style="text-align: center">Click an event on the calendar to book now</div>
+        <div id="event_forms" style="display: none">
+            <div style="display: flex; flex-direction: row; justify-content: center; padding-top: 20px;">
+                <div class="col-md-8" id="flight_form">
+                    {{ wtf.quick_form(flight_form) }}
+                </div>
+                <div class="col-md-8" id="hotel_form">
+                    <form onsubmit="return addStay(event)" novalidate class="form" id="hotel_form_id">
+                        {{ stay_form.hidden_tag() }}
+
+                        <div class="form-group required">
+                        {{ stay_form.name.label }}
+                        {{ stay_form.name(size=32) }}
+                        {% for error in stay_form.name.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        </div>
+                        <div class="form-group required">
+                        {{ stay_form.check_in_date.label }}
+                        {{ stay_form.check_in_date() }}
+                        {% for error in stay_form.check_in_date.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        </div>
+                        <div class="form-group required">
+                        {{ stay_form.check_out_date.label }}
+                        {{ stay_form.check_out_date() }}
+                        {% for error in stay_form.check_out_date.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        </div>
+                        {{ stay_form.submit_stay() }}
+                    </form>
+                </div>
+                <div class="col-md-8" id="event_form">
+                    <form onsubmit="return addEvent(event)" novalidate class="form" id="event_form_id">
+                        {{ event_form.hidden_tag() }}
+
+                        <div class="form-group required">
+                        {{ event_form.name.label }}
+                        {{ event_form.name(size=32) }}
+                        {% for error in event_form.name.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        </div>
+                        <div class="form-group required">
+                        {{ event_form.event_type.label }}
+                        {{ event_form.event_type() }}
+                        {% for error in event_form.event_type.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        </div>
+                        <div class="form-group required">
+                        {{ event_form.location.label }}
+                        {{ event_form.location(size=32) }}
+                        {% for error in event_form.location.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        </div>
+                        <div class="form-group required">
+                        {{ event_form.start_time.label }}
+                        {{ event_form.start_time() }}
+                        {% for error in event_form.start_time.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        </div>
+                        <div class="form-group required">
+                        {{ event_form.end_time.label }}
+                        {{ event_form.end_time() }}
+                        {% for error in event_form.end_time.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                        </div>
+                        {{ event_form.submit_event() }}
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id=book_now align="center"></div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+     <script type="text/javascript">
+        var tripId = {{ trip.id }}
+    </script>
+    <script src="{{url_for('static', filename='calendar.js')}}"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyDPoEnFIi_XtWVahsSQ85ArJJDuT4Upg8Y"></script>
+    <script src="{{url_for('static', filename='mapPlaces.js')}}"></script>
+{% endblock %}

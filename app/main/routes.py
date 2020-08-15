@@ -61,7 +61,7 @@ def trip_view(id):
         flash('Your flight has been added!')
         return redirect(url_for('main.trip_view', id=id))
     return render_template(
-        'trip.html',
+        'itinerary.html',
         trip=trip,
         flight_form=flight_form,
         stay_form=AddStayForm(),
