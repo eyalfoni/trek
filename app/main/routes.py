@@ -119,16 +119,14 @@ def get_event_details(trip_id):
     event_type = request.args.get('type')
     if event_type == "flight":
         flight = Flight.query.filter_by(id=event_id).first_or_404()
-        result = render_template('flight.html', current_user=current_user, flight=flight, trip=trip)
+        result = render_template('flight.html', flight=flight, trip=trip)
         return jsonify(result=result, departure=str(flight.start_datetime), arrival=str(flight.end_datetime))
     elif event_type == "stay":
         stay = Stay.query.filter_by(id=event_id).first_or_404()
-        user = User.query.filter_by(id=stay.user_id).first_or_404()
         res = {
             'stay_name': stay.name,
             'check_in': str(stay.start_date),
             'check_out': str(stay.end_date),
-            'user_name': user.first_name + ' ' + user.last_name
         }
         keys = ['website', 'formatted_address', 'international_phone_number']
         if stay.location is not None:
