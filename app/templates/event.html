@@ -1,16 +1,30 @@
-<div>
-    <div id=event_name>{{event.name}}</div>
-    <div id=event_official_name>{{res.name}}</div>
-    <div id=formatted_address>{{res.formatted_address}}</div>
-    {% if 'international_phone_number' in res %}
-        <div id=international_phone_number>{{res.international_phone_number}}</div>
-    {% endif %}
-    {% if 'website' in res %}
-        <a href="{{res.website}}" target="_blank" rel="noopener noreferrer">Website Link</a>
-    {% endif %}
-    <div id=event_start_time></div>
-    <div id=event_end_time></div>
+<div style="display: flex; flex-direction: column; justify-content: space-between; height: inherit;">
     <div>
-        Event added by {{ res.user_name }}
+        <div style="display: flex; flex-direction: row; justify-content: space-between;">
+            <div>
+                <img src="{{ url_for('static',filename='images/calendar.png') }}">
+            </div>
+            <div style="display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; border-radius: 4px; background: rgba(139, 208, 247, 0.3);">
+                {{event.start_datetime.day}}
+            </div>
+        </div>
+
+        <div style="font-size: 26px; font-weight: 600; padding-top: 20px;">
+            {{ res.name }}
+        </div>
+        <div style="padding-left: 10px;">
+            <div>
+                {% if 'website' in res %}
+                    <a href="{{res.website}}" target="_blank" rel="noopener noreferrer">Website</a>
+                {% endif %}
+                {% if 'international_phone_number' in res %}
+                    <div id=international_phone_number>{{res.international_phone_number}}</div>
+                {% endif %}
+                <div>{{res.formatted_address}}</div>
+            </div>
+            <div style="padding-top: 40px;">
+                <div style="font-size: 12px;">Added by {{ res.user_name }}</div>
+            </div>
+        </div>
     </div>
 </div>

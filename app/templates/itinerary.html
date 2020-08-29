@@ -20,9 +20,9 @@
             </select>
             <button type="button" class="btn btn-secondary" onclick="clearDropdown(this)">All Travelers</button>
         </div>
-        <div id="calendar" style="height: 550px; width: 800px;"></div>
+        <div id="calendar" style="height: 550px; width: 700px;"></div>
     </div>
-    <div style="padding-top: 40px;">
+    <div>
         <div style="display: flex; flex-direction: row; justify-content: flex-end; cursor: pointer; margin: 5px;">
             <button id="add_flight_button" type="button" class="btn btn-primary" onclick="show_flight_form()">
                 Add Flights
@@ -36,8 +36,7 @@
                 Add Activities
             </button>
         </div>
-        <div style="border: 1px solid #337ab7; border-radius: 4px; display: flex; flex-direction: column; justify-content: space-around; padding-top: 30px; width: 400px; height: 600px; padding-bottom: 30px;">
-            <div style="text-align: center">Click an event on the calendar to book now</div>
+        <div style="border: 1px solid #337ab7; border-radius: 4px; display: flex; flex-direction: column; justify-content: space-around; width: 450px; height: 575px;">
             <div id="event_forms" style="display: none">
                 <div style="display: flex; flex-direction: row; justify-content: center; padding-top: 20px;">
                     <div class="col-md-8" id="flight_form">
@@ -115,7 +114,7 @@
                     </div>
                 </div>
             </div>
-            <div id=book_now align="center"></div>
+            <div id=book_now style="height: inherit; padding: 5px;"></div>
         </div>
     </div>
 {% endblock %}
@@ -128,4 +127,9 @@
     <script src="{{url_for('static', filename='calendar.js')}}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyDPoEnFIi_XtWVahsSQ85ArJJDuT4Upg8Y"></script>
     <script src="{{url_for('static', filename='mapPlaces.js')}}"></script>
+{% endblock %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
 {% endblock %}

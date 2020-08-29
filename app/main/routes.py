@@ -125,8 +125,8 @@ def get_event_details(trip_id):
         stay = Stay.query.filter_by(id=event_id).first_or_404()
         res = {
             'stay_name': stay.name,
-            'check_in': str(stay.start_date),
-            'check_out': str(stay.end_date),
+            'check_in': stay.start_date,
+            'check_out': stay.end_date,
         }
         keys = ['website', 'formatted_address', 'international_phone_number']
         if stay.location is not None:
@@ -134,14 +134,14 @@ def get_event_details(trip_id):
                 if key in stay.location:
                     res.update({key: stay.location[key]})
         result = render_template('stay.html', res=res, stay=stay, trip=trip)
-        return jsonify(result=result, check_in=res['check_in'], check_out=res['check_out'])
+        return jsonify(result=result, check_in=str(stay.start_date), check_out=str(stay.end_date))
     else:
         event = Event.query.filter_by(id=event_id).first_or_404()
         user = User.query.filter_by(id=event.user_id).first_or_404()
         res = {
             'event_name': event.name,
-            'start_time': str(event.start_datetime),
-            'end_time': str(event.end_datetime),
+            'start_time': event.start_datetime,
+            'end_time': event.end_datetime,
             'user_name': user.first_name + ' ' + user.last_name
         }
         keys = ['website', 'formatted_address', 'international_phone_number', 'name']
@@ -150,7 +150,7 @@ def get_event_details(trip_id):
                 if key in event.location:
                     res.update({key: event.location[key]})
         result = render_template('event.html', res=res, event=event)
-        return jsonify(result=result, start_time=res['start_time'], end_time=res['end_time'])
+        return jsonify(result=result, start_time=str(event.start_datetime), end_time=str(event.end_datetime))
 
 
 @bp.route('/events')

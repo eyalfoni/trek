@@ -27,7 +27,7 @@ function renderCalendar() {
     var calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
       themeSystem: 'standard',
-      headerToolbar: { center: 'dayGridMonth,timeGridWeek,timeGridDay', end: 'prev,next' },
+      headerToolbar: { center: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek', end: 'prev,next' },
       navLinks: true,
       fixedWeekCount: false,
       events: result.events,

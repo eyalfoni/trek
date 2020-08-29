@@ -1,35 +1,70 @@
-<div>
-    <div id=stay_name>{{stay.name}}</div>
-    <div id=formatted_address>{{res.formatted_address}}</div>
-    {% if 'international_phone_number' in res %}
-        <div id=international_phone_number>{{res.international_phone_number}}</div>
-    {% endif %}
-    {% if 'website' in res %}
-        <a href="{{res.website}}" target="_blank" rel="noopener noreferrer">Website Link</a>
-    {% endif %}
-    <div id=check_in></div>
-    <div id=check_out></div>
-    {% if current_user not in stay.users %}
-        <a style="color: inherit;" href="{{ url_for('main.join', trip_id=trip.id, resource_type='stay', resource_id=stay.id, action='add') }}">
-            <button type="button" class="btn btn-primary">
-                Join this hotel now!
+<div style="display: flex; flex-direction: column; justify-content: space-between; height: inherit;">
+    <div>
+        <div id="stay_header" style="display: flex; flex-direction: row; justify-content: space-between;">
+            <div>
+                <img src="{{ url_for('static',filename='images/hotel.png') }}">
+            </div>
+            <div style="width: 70px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div style="width: 70px; display: flex; flex-direction: row; justify-content: space-between;">
+                    <div style="display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; border-radius: 4px; background: rgba(139, 208, 247, 0.3);">
+                        {{stay.start_date.day}}
+                    </div>
+                    <div style="padding-top: 4px">
+                        -
+                        <!--todo: add arrow icon here-->
+                    </div>
+                    <div style="display: flex; justify-content: center; align-items: center; width: 30px; height: 30px; border-radius: 4px; background: rgba(139, 208, 247, 0.3);">
+                        {{stay.end_date.day}}
+                    </div>
+                </div>
+                <div align="center" style="font-size: 14px">
+                    {{ stay.end_date.day - stay.start_date.day }} nights
+                </div>
+            </div>
+        </div>
+
+        <div id=stay_name style="font-size: 26px; font-weight: 600; padding-top: 20px;">
+            {{stay.name}}
+        </div>
+        <div style="padding-left: 10px;">
+            <div>
+                {% if 'website' in res %}
+                    <a href="{{res.website}}" target="_blank" rel="noopener noreferrer">Website</a>
+                {% endif %}
+                {% if 'international_phone_number' in res %}
+                    <div id=international_phone_number>{{res.international_phone_number}}</div>
+                {% endif %}
+                <div id=formatted_address>{{res.formatted_address}}</div>
+            </div>
+            <div style="padding-top: 40px;">
+                <!--TODO: if i am the only one on the flight have a special treatment-->
+                <div style="font-size: 12px;">Who's going?</div>
+                <div style="padding-left: 5px; font-size: 16px;">
+                    {% for u in stay.users %}
+                        <div>
+                            {{ u.full_name }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="padding-bottom: 10px;">
+        {% if current_user not in stay.users %}
+            <a style="color: inherit; float: right" href="{{ url_for('main.join', trip_id=trip.id, resource_type='stay', resource_id=stay.id, action='add') }}">
+                <button type="button" style="background: #FFD481; border-radius: 4px; border: none; width: 100px; height: 50px;">
+                    Join
+                </button>
+            </a>
+        {% else %}
+
+        <!--TODO: if there are no more users, surface a delete button-->
+        <a style="color: inherit;" href="{{ url_for('main.join', trip_id=trip.id, resource_type='stay', resource_id=stay.id, action='delete') }}">
+            <button style="" type="button" class="btn btn-secondary">
+                Remove me
             </button>
         </a>
-    {% else %}
-    <!--TODO: if there are no more users, surface a delete button-->
-    <a style="color: inherit;" href="{{ url_for('main.join', trip_id=trip.id, resource_type='stay', resource_id=stay.id, action='delete') }}">
-        <button style="" type="button" class="btn btn-secondary">
-            Remove me from this hotel
-        </button>
-    </a>
-    {% endif %}
-    <div>
-        <!--TODO: if i am the only one on the flight have a special treatment-->
-        Travelers staying at this hotel:
-        {% for u in stay.users %}
-            <div>
-                {{ u.full_name }}
-            </div>
-        {% endfor %}
+        {% endif %}
     </div>
 </div>
