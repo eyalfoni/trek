@@ -10,10 +10,11 @@
         </div>
 
         <div style="font-size: 26px; font-weight: 600; padding-top: 20px;">
-            {{ res.name }}
+            {{ event.name }}
         </div>
         <div style="padding-left: 10px;">
             <div>
+                <div>{{ res.name }}</div>
                 {% if 'website' in res %}
                     <a href="{{res.website}}" target="_blank" rel="noopener noreferrer">Website</a>
                 {% endif %}
