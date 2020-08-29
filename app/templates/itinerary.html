@@ -114,7 +114,22 @@
                     </div>
                 </div>
             </div>
-            <div id=book_now style="height: inherit; padding: 5px;"></div>
+            <div id=book_now style="height: inherit; padding: 5px;">
+                <div style="font-size: 24px;">Welcome to {{ trip.title }}!</div>
+                <div style="padding-top: 40px;">
+                    <div style="font-size: 12px;">Who's going?</div>
+                    <div style="padding-left: 5px; font-size: 16px;">
+                        {% for u in trip.travelers %}
+                            <div>
+                                {{ u.full_name }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div style="padding-top: 40px;">
+                    Get started by exploring the calendar
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
