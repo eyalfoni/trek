@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <div class="container">
+        <h3>Your trips</h3>
+        <div class="container" style="display: flex; flex-flow: row wrap; justify-content: flex-start;">
+            {% for trip in trips_result %}
+                <div style="border: 1px solid #337ab7; border-radius: 4px; margin: 30px; height: 150px; width: 230px; padding: 5px">
+                    <div style="display: flex; flex-direction: column; justify-content: space-between; height: 140px;">
+                        <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                            <div>
+                                <div style="font-size: 20px; font-weight: 600;">{{ trip.title }}</div>
+                                <div>{{ trip.num_travelers }} travelers</div>
+                            </div>
+                            <div style="border-radius: 4px; background: rgba(139, 208, 247, 0.3); padding: 2px; height: 26px; align-items: center;">
+                                {{ trip.start_date }}
+                            </div>
+                        </div>
+                        <div align="center" style="display: flex; flex-direction: row; justify-content: space-evenly;">
+                            <div>
+                                <img src="{{ url_for('static',filename='images/plane.png') }}" style="height: 20px;">
+                                <div style="font-size: 12px;">
+                                    {{ trip.num_flights }} flights
+                                </div>
+                            </div>
+                            <div>
+                                <img src="{{ url_for('static',filename='images/hotel.png') }}" style="height: 20px;">
+                                <div style="font-size: 12px;">
+                                    {{ trip.num_stays }} hotels
+                                </div>
+                            </div>
+                            <div>
+                                <img src="{{ url_for('static',filename='images/calendar.png') }}" style="height: 20px;">
+                                <div style="font-size: 12px;">
+                                    {{ trip.num_events }} events
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <a style="color: inherit; float: right" href="{{ url_for('main.trip_view', id=trip.id) }}">
+                                <button type="button" style="background: #FFD481; border-radius: 4px; border: none; width: 75px; height: 40px;">
+                                    Go
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <div style="border: 1px solid #337ab7; border-radius: 4px; margin: 30px; height: 150px; width: 230px; padding: 5px">
+                {{ wtf.quick_form(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+{% endblock %}

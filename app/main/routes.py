@@ -23,14 +23,31 @@ def before_request():
 @login_required
 def index():
     form = AddTripForm()
+    all_trips = current_user.trips
+    trips_result = []
+    for trip in all_trips:
+        flights = Flight.query.filter_by(trip_id=trip.id).all()
+        stays = Stay.query.filter_by(trip_id=trip.id).all()
+        events = Event.query.filter_by(trip_id=trip.id).all()
+        trip_start_date = get_cal_start_date(flights, stays, events, iso_format=False)
+        trip_obj = {
+            'id': trip.id,
+            'title': trip.title,
+            'num_travelers': len(trip.travelers),
+            'num_events': len(events),
+            'num_stays': len(stays),
+            'num_flights': len(flights),
+            'start_date': trip_start_date.strftime('%B %Y')
+        }
+        trips_result.append(trip_obj)
     if form.validate_on_submit():
         trip = Trip(title=form.title.data)
         trip.travelers.append(current_user)
         db.session.add(trip)
         db.session.commit()
         flash('Your trip has been added!')
-        return redirect(url_for('main.index'))
-    return render_template('index.html', trips=current_user.trips, form=form)
+        return redirect(url_for('main.trip_view', id=trip.id))
+    return render_template('trips.html', trips=current_user.trips, form=form, trips_result=trips_result)
 
 
 @bp.route('/user/<id>')

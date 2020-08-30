@@ -73,7 +73,7 @@ def daterange(start_date, end_date):
         yield start_date + timedelta(n)
 
 
-def get_cal_start_date(flights, stays, events):
+def get_cal_start_date(flights, stays, events, iso_format=True):
     default_start_date = date.today()
     if flights and flights[0].start_datetime.date() < default_start_date:
         default_start_date = flights[0].start_datetime.date()
@@ -81,4 +81,6 @@ def get_cal_start_date(flights, stays, events):
         default_start_date = stays[0].start_date
     if events and events[0].start_datetime.date() < default_start_date:
         default_start_date = events[0].start_datetime.date()
-    return default_start_date.isoformat()
+    if iso_format:
+        return default_start_date.isoformat()
+    return default_start_date

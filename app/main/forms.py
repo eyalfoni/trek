@@ -53,8 +53,8 @@ class AddCommentForm(FlaskForm):
 
 
 class AddTripForm(FlaskForm):
-    title = StringField('Trip Name', validators=[DataRequired()])
-    submit = SubmitField('Add Trip')
+    title = StringField('Create new trip', validators=[DataRequired()], render_kw={"placeholder": "Trip name"})
+    submit = SubmitField('Add Trip', render_kw={"class": "add_trip_submit"})
 
     def validate_title(self, title):
         # TODO - add better validation

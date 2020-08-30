@@ -1,3 +1,23 @@
 .fc-day-today {
-  background-color:inherit !important;
+    background-color:inherit !important;
+}
+
+.control-label {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.add_trip_submit {
+    background-color: #FFD481;
+    border-radius: 4px;
+    border: none;
+    width: 75px;
+    height: 40px;
+    float: right;
+    align: center;
+    margin-top: 16px;
+}
+
+.add_trip_submit:hover {
+    background-color: #FFD481;
 }
