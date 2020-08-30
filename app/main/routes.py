@@ -45,6 +45,9 @@ def user(id):
 def trip_view(id):
     flight_form = AddFlightForm()
     trip = Trip.query.filter_by(id=id).first_or_404()
+    num_flights = Flight.query.filter_by(trip_id=trip.id).count()
+    num_stays = Stay.query.filter_by(trip_id=trip.id).count()
+    num_events = Event.query.filter_by(trip_id=trip.id).count()
     if current_user not in trip.travelers:
         return render_template('errors/404.html')
 
@@ -66,7 +69,10 @@ def trip_view(id):
         flight_form=flight_form,
         stay_form=AddStayForm(),
         event_form=AddEventForm(),
-        travelers=trip.travelers
+        travelers=trip.travelers,
+        num_flights=num_flights,
+        num_stays=num_stays,
+        num_events=num_events,
     )
 
 

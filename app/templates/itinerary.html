@@ -115,8 +115,8 @@
                 </div>
             </div>
             <div id=book_now style="height: inherit; padding: 5px;">
-                <div style="font-size: 24px;">Welcome to {{ trip.title }}!</div>
-                <div style="padding-top: 40px;">
+                <div style="font-size: 24px;">Welcome to <span style="font-weight: 600">{{ trip.title }}!</span></div>
+                <div style="padding-left: 10px; padding-top: 40px;">
                     <div style="font-size: 12px;">Who's going?</div>
                     <div style="padding-left: 5px; font-size: 16px;">
                         {% for u in trip.travelers %}
@@ -126,8 +126,28 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div style="padding-top: 40px;">
-                    Get started by exploring the calendar
+                <div align="center" style="padding-left: 10px; padding-top: 40px;">
+                    Your trip at a glance
+                </div>
+                <div align="center" style="display: flex; flex-direction: row; justify-content: space-evenly;">
+                    <div>
+                        <img src="{{ url_for('static',filename='images/plane.png') }}">
+                        <div>
+                            {{ num_flights }} flights
+                        </div>
+                    </div>
+                    <div>
+                        <img src="{{ url_for('static',filename='images/hotel.png') }}">
+                        <div>
+                            {{ num_stays }} hotels
+                        </div>
+                    </div>
+                    <div>
+                        <img src="{{ url_for('static',filename='images/calendar.png') }}">
+                        <div>
+                            {{ num_events }} events
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
