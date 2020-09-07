@@ -1,0 +1,38 @@
+version: '3'
+services:
+  web:
+    build: .
+    restart: on-failure
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+    networks: ["public", "private"]
+    volumes:
+    - .:/trek/
+    stdin_open: true
+    tty: true
+    dns: ["8.8.8.8"]
+  db:
+    image: postgres:11.6-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "trek"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports: ["5432:5432"]
+    networks: ["private"]
+    environment:
+      DB_NAME: trek
+      DB_PASS: trek
+      DB_USER: trek
+      DB_HOST: db
+    volumes:
+      - .docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d/
+      - postgres-data:/var/lib/postgresql/data
+networks:
+  public:
+  private:
+volumes:
+  postgres-data:
