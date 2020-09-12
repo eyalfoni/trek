@@ -74,13 +74,13 @@ def daterange(start_date, end_date):
 
 
 def get_cal_start_date(flights, stays, events, iso_format=True):
-    default_start_date = date.today()
-    if flights and flights[0].start_datetime.date() < default_start_date:
-        default_start_date = flights[0].start_datetime.date()
-    if stays and stays[0].start_date < default_start_date:
-        default_start_date = stays[0].start_date
-    if events and events[0].start_datetime.date() < default_start_date:
-        default_start_date = events[0].start_datetime.date()
-    if iso_format:
-        return default_start_date.isoformat()
-    return default_start_date
+    possible_dates = []
+    if flights:
+        possible_dates.append(flights[0].start_datetime.date())
+    if stays:
+        possible_dates.append(stays[0].start_date)
+    if events:
+        possible_dates.append(events[0].start_datetime.date())
+    if not possible_dates:
+        return date.today().isoformat() if iso_format else date.today()
+    return min(possible_dates).isoformat() if iso_format else min(possible_dates)
