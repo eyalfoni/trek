@@ -2,8 +2,8 @@ import json
 from flask import render_template, flash, redirect, url_for, request, jsonify
 from app import db
 from app.auth.forms import RegistrationForm
-from app.main.forms import AddTripForm, AddFlightForm, AddStayForm, AddSupplyItemForm, AddEventForm
-from app.models import User, Trip, Flight, Stay, SupplyItem, Event
+from app.main.forms import AddTripForm, AddFlightForm, AddStayForm, AddSupplyItemForm, AddEventForm, AddPostForm, AddCommentForm
+from app.models import User, Trip, Flight, Stay, SupplyItem, Event, Post, Comment
 from flask_login import current_user, login_required, login_user
 from datetime import datetime
 from app.main import bp
@@ -211,13 +211,6 @@ def get_events_for_cal():
     return jsonify(result=dict(events=cal_events, start_date=start_date))
 
 
-@bp.route('/discussion/<id>')
-@login_required
-def discussion_view(id):
-    trip = Trip.query.filter_by(id=id).first_or_404()
-    return render_template('discussion.html', trip=trip)
-
-
 @bp.route('/supplies_view/<id>', methods=['GET', 'POST'])
 @login_required
 def supplies_view(id):
@@ -361,3 +354,40 @@ def flight_view(trip_id, flight_id):
         flight_form.departure_time.data = flight.start_datetime
         flight_form.arrival_time.data = flight.end_datetime
     return render_template('flight_edit.html', flight=flight, trip=trip, flight_form=flight_form)
+
+
+@bp.route('/<id>/posts/', methods=["GET", "POST"])
+@login_required
+def discussion_view(id):
+    trip = Trip.query.filter_by(id=id).first_or_404()
+    posts = Post.query.filter_by(trip_id=id)
+    form = AddPostForm()
+    if form.validate_on_submit():
+        post = Post(
+            body=form.body.data,
+            user_id=current_user.id,
+            trip_id=trip.id,
+        )
+        db.session.add(post)
+        db.session.commit()
+        return redirect(url_for('main.discussion_view', id=id))
+    return render_template('posts.html', trip=trip, posts=posts, form=form)
+
+
+@bp.route('/comments/<trip_id>/<post_id>', methods=['GET', 'POST'])
+@login_required
+def comments_view(trip_id, post_id):
+    trip = Trip.query.filter_by(id=trip_id).first_or_404()
+    post = Post.query.filter_by(id=post_id).first_or_404()
+    comments = post.comments
+    form = AddCommentForm()
+    if form.validate_on_submit():
+        comment = Comment(
+            body=form.body.data,
+            user_id=current_user.id,
+            post_id=post_id
+        )
+        db.session.add(comment)
+        db.session.commit()
+        return redirect(url_for('main.comments_view', trip_id=trip_id, post_id=post_id))
+    return render_template('comments.html', trip=trip, post=post, comments=comments, form=form)

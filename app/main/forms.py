@@ -47,11 +47,6 @@ class AddListingForm(FlaskForm):
                filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-class AddCommentForm(FlaskForm):
-    body = StringField('', validators=[DataRequired()])
-    submit = SubmitField('Comment')
-
-
 class AddTripForm(FlaskForm):
     title = StringField('Create new trip', validators=[DataRequired()], render_kw={"placeholder": "Trip name"})
     submit = SubmitField('Add Trip', render_kw={"class": "add_trip_submit"})
@@ -107,3 +102,13 @@ class AddEventForm(FlaskForm):
     def validate_departure_time(self, departure_time):
         if departure_time.data >= self.arrival_time.data:
             raise ValidationError('End time must be after start time.')
+
+
+class AddPostForm(FlaskForm):
+    body = TextAreaField('', validators=[DataRequired()])
+    submit = SubmitField('Add Post')
+
+
+class AddCommentForm(FlaskForm):
+    body = TextAreaField('', validators=[DataRequired()])
+    submit = SubmitField('Add Comment')

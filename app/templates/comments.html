@@ -1,0 +1,24 @@
+{% extends "trip.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block trip_content %}
+    <div style="display: flex; flex-direction: column; justify-content: flex-start; width: 100%">
+        <div style="border: 1px solid #337ab7; border-radius: 4px; margin: 30px; height: 150px; width: 550px; padding: 5px">
+            <div>{{ post.user.full_name }}</div>
+            <div style="padding-left: 50px; padding-top: 30px;">{{ post.body }}</div>
+        </div>
+        <div>
+            Comments
+            {% for comment in comments %}
+                <div style="border: 1px solid #337ab7; border-radius: 4px; margin: 30px; height: 150px; width: 550px; padding: 5px">
+                    <div>{{ comment.user.full_name }}</div>
+                    <div style="padding-left: 50px; padding-top: 30px;">{{ comment.body }}</div>
+                </div>
+            {% endfor %}
+        </div>
+        <div style="border: 1px solid #337ab7; border-radius: 4px; margin: 30px; height: 150px; width: 550px; padding: 5px">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
+{% endblock %}

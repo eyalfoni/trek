@@ -173,9 +173,33 @@ class SupplyItem(db.Model):
     user = db.relationship('User')
 
 
+class Post(db.Model):
+    __tablename__ = 'posts'
+
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text())
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    trip_id = db.Column(db.Integer, db.ForeignKey('trips.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    comments = db.relationship("Comment")
+    user = db.relationship('User')
+
+
+class Comment(db.Model):
+    __tablename__ = 'post_comments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text())
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    user = db.relationship('User')
+
+
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
-
-
-# TODO - make one to many relationship on flight, stay, event with users
