@@ -3,15 +3,12 @@
 
 
 {% block trip_content %}
-    <div style="display: flex; flex-direction: column; justify-content: flex-start; width: 100%">
-        <div style="border: 1px solid #337ab7; border-radius: 4px; margin: 30px; height: 150px; width: 550px; padding: 5px">
-            {{ wtf.quick_form(form) }}
-        </div>
+    <div style="display: flex; flex-direction: row; justify-content: flex-start; width: 100%">
         <div>
             {% for post in posts %}
-                <div style="border: 1px solid #337ab7; border-radius: 4px; margin: 30px; height: 150px; width: 550px; padding: 5px">
-                    <div>{{ post.user.full_name }}</div>
-                    <div style="padding-left: 50px; padding-top: 30px;">{{ post.body }}</div>
+                <div style="border: 1px solid #337ab7; border-radius: 4px; margin: 20px; height: 120px; width: 550px; padding: 5px">
+                    <div>{{ post.user.full_name }} {{ moment(post.created_at).fromNow() }}</div>
+                    <div style="padding-left: 50px; padding-top: 10px;">{{ post.body }}</div>
                     <a style="color: inherit; float: right" href="{{ url_for('main.comments_view', trip_id=trip.id, post_id=post.id) }}">
                         <button type="button" style="background: #FFD481; border-radius: 4px; border: none; width: 120px; height: 40px;">
                             {{ post.comments|length }} Comments
@@ -20,5 +17,14 @@
                 </div>
             {% endfor %}
         </div>
+        <div style="border: 1px solid #337ab7; border-radius: 4px; margin: 20px; height: 150px; width: 550px; padding: 5px">
+            Start a new discussion!
+            {{ wtf.quick_form(form) }}
+        </div>
     </div>
+{% endblock %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{url_for('static', filename='styles/post_styles.css')}}">
 {% endblock %}

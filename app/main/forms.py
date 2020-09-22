@@ -106,7 +106,7 @@ class AddEventForm(FlaskForm):
 
 class AddPostForm(FlaskForm):
     body = TextAreaField('', validators=[DataRequired()])
-    submit = SubmitField('Add Post')
+    submit = SubmitField('Add Post', render_kw={"id": "add_post_id"})
 
 
 class AddCommentForm(FlaskForm):

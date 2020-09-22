@@ -3,21 +3,21 @@
 
 
 {% block trip_content %}
-    <div style="display: flex; flex-direction: column; justify-content: flex-start; width: 100%">
-        <div style="border: 1px solid #337ab7; border-radius: 4px; margin: 30px; height: 150px; width: 550px; padding: 5px">
-            <div>{{ post.user.full_name }}</div>
-            <div style="padding-left: 50px; padding-top: 30px;">{{ post.body }}</div>
+    <div style="display: flex; flex-direction: row; justify-content: flex-start; width: 100%">
+        <div style="border: 1px solid #337ab7; border-radius: 4px; margin: 30px; width: 550px; padding: 5px">
+            <div>{{ post.user.full_name }} {{ moment(post.created_at).fromNow() }}</div>
+            <div style="padding-left: 30px; padding-bottom: 10px; font-weight: 600; border-bottom: 2px solid black;">{{ post.body }}</div>
+            <div style="padding-top: 15px;">
+                {% for comment in comments %}
+                    <div style="margin-top: 15px; background-color: #e3dcdc;">
+                        <div>{{ comment.user.full_name }} {{ moment(comment.created_at).fromNow() }}</div>
+                        <div style="padding-left: 30px;">{{ comment.body }}</div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
-        <div>
-            Comments
-            {% for comment in comments %}
-                <div style="border: 1px solid #337ab7; border-radius: 4px; margin: 30px; height: 150px; width: 550px; padding: 5px">
-                    <div>{{ comment.user.full_name }}</div>
-                    <div style="padding-left: 50px; padding-top: 30px;">{{ comment.body }}</div>
-                </div>
-            {% endfor %}
-        </div>
         <div style="border: 1px solid #337ab7; border-radius: 4px; margin: 30px; height: 150px; width: 550px; padding: 5px">
+            Add a comment!
             {{ wtf.quick_form(form) }}
         </div>
     </div>
